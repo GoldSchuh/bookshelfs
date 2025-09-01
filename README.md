@@ -6,6 +6,11 @@ Quick play:
 ```bash
 docker run --rm -p 8080:80 -v ./:/var/www/html/apps-extra/bookshelfs ghcr.io/juliusknorr/nextcloud-dev-php81:latest
 ```
+
+Will need to replace this "privacy leaking" gif
+
+![gif](./output.gif)
+
 ## State of maintenance
 
 I don't have too much free time to maintain this app, you are welcome to fork it!
