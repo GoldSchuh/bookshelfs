@@ -1,0 +1,28 @@
+<template>
+	<NcAppContent>
+		<div id="bookshelfs">
+			<Bookshelf/>
+		</div>
+	</NcAppContent>
+</template>
+
+<script>
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import Bookshelf from './Shelf.vue'
+
+export default {
+	name: 'App',
+	components: {
+		NcAppContent,
+		Bookshelf,
+	},
+}
+</script>
+
+<style scoped lang="scss">
+#bookshelfs {
+	display: flex;
+	justify-content: center;
+	margin: 16px;
+}
+</style>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>bookshelfs</id>
+	<name>Bookshelfs</name>
+	<summary>Order your books in a virtual shelf!</summary>
+	<description><![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading, show off!]]></description>
+	<version>1.0.0</version>
+	<licence>agpl</licence>
+	<author mail="kars.van.velzen@gmail.com" homepage="https://me.octubre.be">Kars van Velzen</author>
+	<namespace>Bookshelfs</namespace>
+	<category>files</category>
+	<category>multimedia</category>
+	<category>organization</category>
+	<bugs>https://test.com</bugs>
+	<dependencies>
+		<nextcloud min-version="29" max-version="32"/>
+	</dependencies>
+	<navigations>
+		<navigation>
+			<id>bookshelfs</id>
+			<name>Bookshelfs</name>
+			<route>bookshelfs.page.index</route>
+			<icon>app.svg</icon>
+			<type>link</type>
+		</navigation>
+	</navigations>
+</info>
