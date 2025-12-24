@@ -68,7 +68,10 @@ export default {
 				this.newBookTitle = '';
 				this.newBookAuthor = '';
 			} else {
-				alert('Please provide both title and author!');
+        this.books.push({
+          title: 'a', // TODO fix vite hot reload
+          author: 'snananannnnanananan',
+        });
 			}
 		},
 	},

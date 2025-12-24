@@ -1,6 +1,8 @@
-import Vue from 'vue'
-import App from './App.vue'
-Vue.mixin({ methods: { t, n } })
+// File: `src/main.js`
+import { createApp } from 'vue';
+import App from './App.vue';
 
-const View = Vue.extend(App)
-new View().$mount('#bookshelfs')
+const app = createApp(App);
+
+// Mount the app to the DOM element `#bookshelfs`
+app.mount('#bookshelfs');
