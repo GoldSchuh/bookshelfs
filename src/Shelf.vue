@@ -44,7 +44,7 @@ export default {
 		return {
 			// Existing books list
 			books: [
-				{ title: 'The Great Gatsby', author: 'W.S.' },
+				{ title: 'The Great Gatsby yyyyyyyyyyyyyyyyyy', author: 'W.S.' },
 				{ title: '1984', author: 'W.S.' },
 				{ title: 'To Kill a Mockingbird', author: 'W.S.' },
 			],
