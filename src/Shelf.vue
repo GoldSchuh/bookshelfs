@@ -1,3 +1,10 @@
+<!--// TODO Only do a 'boble' effect on hover-->
+<!--// TODO Add spine animation on select-->
+<!-- TODO Put book-add functionality in a side bar-->
+<!--TODO cover image-->
+<!-- TODO Persistent books-->
+<!-- TODO CRUD books-->
+
 <template>
 	<div class="bookshelf">
 		<!-- Form to add a new book -->
@@ -14,67 +21,62 @@
 				placeholder="Enter Book Author"
 				class="input-author"
 			/>
-			<button @click="addBook" class="add-book-btn">Add New Book</button>
+			<button @click="addBook" class="book-add">Add</button>
 		</div>
 
 		<!-- Draggable books using Vue.Draggable -->
-		<draggable v-model="books" class="bookshelf-inner" :group="{ name: 'books' }" @start="drag=true" @end="drag=false">
-			<div v-for="(book, index) in books" :key="index" class="book">
+		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="drag=false">
+      <template #item="{ element }">
+      <div class="book">
 				<div class="side spine">
-					<span class="spine-title">{{ book.title }}</span>
-					<span class="spine-author">{{ book.author }}</span>
+					<span class="spine-title">{{ element.title }}</span>
+					<span class="spine-author">{{ element.author }}</span>
 				</div>
 				<div class="side top"></div>
-				<div class="side cover"></div>
+				<div class="side cover" ></div>
+<!--    :style="{ backgroundImage: `url(${element.cover})` }"    -->
 			</div>
-		</draggable>
+      </template>
+		</Draggable>
 	</div>
 </template>
 
 <script>
-// Import Vue.Draggable
-import draggable from 'vuedraggable';
+import Draggable from 'vuedraggable'
+
+let nextId = 4
 
 export default {
-	name: 'Bookshelf',
-	components: {
-		draggable,
-	},
-	data() {
-		return {
-			// Existing books list
-			books: [
-				{ title: 'The Great Gatsby yyyyyyyyyyyyyyyyyy', author: 'W.S.' },
-				{ title: '1984', author: 'W.S.' },
-				{ title: 'To Kill a Mockingbird', author: 'W.S.' },
-			],
-			// New book input values
-			newBookTitle: '',
-			newBookAuthor: '',
-			drag: false, // Track dragging status
-		};
-	},
-	methods: {
-		// Method to add a new book to the bookshelf
-		addBook() {
-			// Check if both title and author are provided
-			if (this.newBookTitle && this.newBookAuthor) {
-				this.books.push({
-					title: this.newBookTitle,
-					author: this.newBookAuthor,
-				});
+  name: 'Bookshelf',
+  components: { Draggable },
 
-				// Clear input fields after adding the book
-				this.newBookTitle = '';
-				this.newBookAuthor = '';
-			} else {
-        this.books.push({
-          title: 'a', // TODO fix vite hot reload
-          author: 'snananannnnanananan',
-        });
-			}
-		},
-	},
+  data() {
+    return {
+      books: [
+        { id: 1, title: 'The Great Gatsby', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
+        { id: 2, title: '1984', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
+        { id: 3, title: 'To Kill a Mockingbird', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
+      ],
+      newBookTitle: '',
+      newBookAuthor: '',
+      drag: false,
+    }
+  },
+
+  methods: {
+    addBook() {
+      if (!this.newBookTitle || !this.newBookAuthor) return
+
+      this.books.push({
+        id: nextId++,
+        title: this.newBookTitle,
+        author: this.newBookAuthor,
+      })
+
+      this.newBookTitle = ''
+      this.newBookAuthor = ''
+    },
+  },
 }
 </script>
 
@@ -87,52 +89,48 @@ $color_3: goldenrod;
 	--spine-pyramid: linear-gradient(315deg, transparent 75%, rgba(255, 255, 255, 0.1) 0),
 }
 
+// Main component
 .bookshelf {
 	width: 100%;
-	margin-top: 32px;
+	margin: 10px;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px; /* Space between books */
 }
 
-.bookshelf-inner {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	cursor: move; /* Show a move cursor */
-}
-
-/* Styling for the input and button form */
+/* Input */
 .add-book-form {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	display: flex;
-	gap: 10px;
-	margin-left: 10px;
+	gap: 5px;
 }
-
 .input-title,
 .input-author {
 	padding: 8px;
 	font-size: 14px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-	width: 200px;
+	width: 20vw;
+  max-width: 160px;
+  max-height: 16px;
 }
-
-.add-book-btn {
-	padding: 8px 16px;
-	background-color: #4CAF50;
+.book-add {
 	color: white;
-	border: none;
-	border-radius: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 	cursor: pointer;
+  max-height: 16px;
 }
-
-.add-book-btn:hover {
+.book-add:hover {
 	background-color: #45a049;
 }
 
-/* Book and bookshelf styles */
+/* Books */
+.bookshelf-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
 .book {
 	width: 50px;
 	height: 280px;
@@ -162,7 +160,8 @@ $color_3: goldenrod;
 	position: relative;
 	width: 50px;
 	height: 280px;
-	background-image: var(--spine-tartan);
+
+	//background-image: var(--thisone); // TODO Replace with book image colours from cover
 	transform: rotateY(0deg) translateZ(0px);
 }
 
@@ -197,7 +196,7 @@ $color_3: goldenrod;
 	width: 190px;
 	height: 280px;
 	top: 0;
-	background-image: url("https://picsum.photos/190/280");
+	background-image: url("../img/object-oriented-reengineering.png");
 	background-size: contain;
 	background-repeat: round;
 	left: 50px;

@@ -28,7 +28,7 @@
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/vue": "^9.0.0-rc.9",
     "vue": "^3.5.21",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",

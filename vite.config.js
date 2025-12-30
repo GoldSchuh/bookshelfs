@@ -14,7 +14,7 @@ export default defineConfig(
         watch: {
           ignored: [
             "**/vendor/**",
-            "**/vendor-bin/**",
+            "**/vendor-bin/**", // This doesn't work somehow FIXME
           ]
         },
         host: true, // listen on all interfaces

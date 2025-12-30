@@ -6,10 +6,6 @@
 	</NcAppContent>
 </template>
 
-<!--FIXME propr css for vue3-->
-<!--FIXME lower #nr of filewatchers again?-->
-
-
 <script>
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import Bookshelf from './Shelf.vue'
@@ -24,9 +20,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#bookshelfs {
-	display: flex;
-	justify-content: center;
-	margin: 16px;
+.app-content {
+  height: 100vh;
+  width: 100vw;
 }
 </style>
