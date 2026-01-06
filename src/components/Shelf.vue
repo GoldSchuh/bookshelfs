@@ -4,25 +4,28 @@
 <!--TODO cover image-->
 <!-- TODO Persistent books-->
 <!-- TODO CRUD books-->
+<!--Resize books and give them colours (zijdelings ekaft)-->
+<!--Link book to an actual file-->
+<!--Make it possible to show big cover//boek draaien by default-->
 
 <template>
 	<div class="bookshelf">
-		<!-- Form to add a new book -->
-		<div class="add-book-form">
-			<input
-				v-model="newBookTitle"
-				type="text"
-				placeholder="Enter Book Title"
-				class="input-title"
-			/>
-			<input
-				v-model="newBookAuthor"
-				type="text"
-				placeholder="Enter Book Author"
-				class="input-author"
-			/>
-			<button @click="addBook" class="book-add">Add</button>
-		</div>
+<!--    &lt;!&ndash; Form to add a new book &ndash;&gt;-->
+<!--    <div class="add-book-form">-->
+<!--      <input-->
+<!--          v-model="newBookTitle"-->
+<!--          type="text"-->
+<!--          placeholder="Enter Book Title"-->
+<!--          class="input-title"-->
+<!--      />-->
+<!--      <input-->
+<!--          v-model="newBookAuthor"-->
+<!--          type="text"-->
+<!--          placeholder="Enter Book Author"-->
+<!--          class="input-author"-->
+<!--      />-->
+<!--      <button @click="addBook" class="book-add">Add</button>-->
+<!--    </div>-->
 
 		<!-- Draggable books using Vue.Draggable -->
 		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="drag=false">
@@ -43,6 +46,7 @@
 
 <script>
 import Draggable from 'vuedraggable'
+import {loadState} from "@nextcloud/initial-state";
 
 let nextId = 4
 
@@ -51,6 +55,8 @@ export default {
   components: { Draggable },
 
   data() {
+    let state = loadState('bookshelfs', 'bookshelfs-initial-state')
+    console.log("Loaded state:", state)
     return {
       books: [
         { id: 1, title: 'The Great Gatsby', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
@@ -64,17 +70,17 @@ export default {
   },
 
   methods: {
-    addBook() {
-      if (!this.newBookTitle || !this.newBookAuthor) return
+    addBook(title, author) {
+      if (!title || !author) return
 
       this.books.push({
         id: nextId++,
-        title: this.newBookTitle,
-        author: this.newBookAuthor,
+        title: title,
+        author: author,
       })
 
-      this.newBookTitle = ''
-      this.newBookAuthor = ''
+      // this.newBookTitle = ''
+      // this.newBookAuthor = ''
     },
   },
 }
@@ -92,36 +98,9 @@ $color_3: goldenrod;
 // Main component
 .bookshelf {
 	width: 100%;
-	margin: 10px;
+	margin: 50px;
 	display: flex;
 	flex-wrap: wrap;
-}
-
-/* Input */
-.add-book-form {
-	margin-bottom: 10px;
-	display: flex;
-	gap: 5px;
-}
-.input-title,
-.input-author {
-	padding: 8px;
-	font-size: 14px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	width: 20vw;
-  max-width: 160px;
-  max-height: 16px;
-}
-.book-add {
-	color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-	cursor: pointer;
-  max-height: 16px;
-}
-.book-add:hover {
-	background-color: #45a049;
 }
 
 /* Books */
@@ -196,7 +175,7 @@ $color_3: goldenrod;
 	width: 190px;
 	height: 280px;
 	top: 0;
-	background-image: url("../img/object-oriented-reengineering.png");
+	background-image: url("http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png"); //"../img/object-oriented-reengineering.png" not work but // http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png does resolve but this not? Why is it 'apps-extra'?
 	background-size: contain;
 	background-repeat: round;
 	left: 50px;

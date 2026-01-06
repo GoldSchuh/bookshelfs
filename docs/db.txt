@@ -1,0 +1,8 @@
+
+user id, book-id, var-char: title, var-char: author,
+
+Later:
+var-char: image-url, var-char: file-url, int: position
+
+
+

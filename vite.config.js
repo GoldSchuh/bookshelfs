@@ -1,15 +1,28 @@
 import { createAppConfig } from '@nextcloud/vite-config'
 import { defineConfig } from 'vite'
+import stylelint from "vite-plugin-stylelint";
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export default defineConfig(
     createAppConfig({
-      main: 'src/main.js',
+      main: 'src/main.ts',
     }, {
       config: {
         build: {
           cssCodeSplit: false,
-        }
+        }, css: {
+          modules: {
+            localsConvention: "camelCase",
+          },
+        },
+        plugins: [stylelint()],
       },
+      inlineCSS: { relativeCSSInjection: true },
+      minify: isProduction,
+      createEmptyCSSEntryPoints: true,
+      extractLicenseInformation: true,
+      thirdPartyLicense: false,
       server: {
         watch: {
           ignored: [
