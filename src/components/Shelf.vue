@@ -4,6 +4,7 @@
 <!--TODO cover image-->
 <!-- TODO Persistent books-->
 <!-- TODO CRUD books-->
+<!--Book search bar-->
 <!--Resize books and give them colours (zijdelings ekaft)-->
 <!--Link book to an actual file-->
 <!--Make it possible to show big cover//boek draaien by default-->

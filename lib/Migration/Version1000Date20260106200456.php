@@ -50,7 +50,7 @@ class Version1000Date20260106200456 extends SimpleMigrationStep {
                 'length' => 4,
             ]);
             $table->setPrimaryKey(['id']);
-            $table->addIndex(['user_id'], 'bookshelfs'); // TODO Redo db creation
+            $table->addIndex(['user_id'], 'bookshelfs'); // TODO Redo db creation as we did not do a migration with this index name
         }
 
         return $schema;

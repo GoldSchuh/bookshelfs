@@ -7,7 +7,7 @@
 	<description><![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading, show off!]]></description>
 	<version>1.1.0</version>
 	<licence>agpl</licence>
-	<author mail="kars.van.velzen@gmail.com" homepage="https://me.octubre.be">Kars van Velzen</author>
+	<author mail="kars@octubre.be" homepage="https://me.octubre.be">Kars van Velzen</author>
 	<namespace>Bookshelfs</namespace>
 	<category>files</category>
 	<category>multimedia</category>
