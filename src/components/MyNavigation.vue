@@ -69,9 +69,6 @@
 import FileExportOutlineIcon from 'vue-material-design-icons/FileExportOutline.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
 import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
-
-// import NoteIcon from './icons/NoteIcon.vue'
-
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -159,13 +156,13 @@ export default {
 //  }
 //}
 
-:deep(.selectedNote) {
-  > .app-navigation-entry {
-    background: orangered;//var(--color-primary-light, lightgrey);
-  }
-
-  > .app-navigation-entry a {
-    font-weight: bold;
-  }
-}
+//:deep(.selectedNote) {
+//  > .app-navigation-entry {
+//    background: orangered;//var(--color-primary-light, lightgrey);
+//  }
+//
+//  > .app-navigation-entry a {
+//    font-weight: bold;
+//  }
+//}
 </style>

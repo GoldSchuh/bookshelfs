@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\Bookshelfs\Db;
 
-use DateTime;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -80,14 +79,16 @@ class BookMapper extends QBMapper {
 	 * @param string $userId
 	 * @param string $title
 	 * @param string $author
+	 * @param int $position
 	 * @return Book
 	 * @throws Exception
 	 */
-	public function createBook(string $userId, string $title, string $author): Book {
+	public function createBook(string $userId, string $title, string $author, int $position): Book {
 		$book = new Book();
 		$book->setUserId($userId);
 		$book->setTitle($title);
 		$book->setAuthor($author);
+		$book->setPosition($position);
 		return $this->insert($book);
 	}
 
@@ -96,11 +97,12 @@ class BookMapper extends QBMapper {
 	 * @param string $userId
 	 * @param string $title
 	 * @param string $author
+	 * @param int $position
 	 * @return Book |null
 	 * @throws Exception
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null): ?Book {
-		if ($title === null && $author === null) {
+	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null): ?Book {
+		if ($title === null && $author === null && $position === null) {
 			return null;
 		}
 		try {
@@ -113,6 +115,9 @@ class BookMapper extends QBMapper {
 		}
 		if ($author !== null) {
 			$book->setAuthor($author);
+		}
+		if ($position !== null) {
+			$book->setPosition($position);
 		}
 		return $this->update($book);
 	}

@@ -1,19 +1,20 @@
-<!--// TODO Only do a 'boble' effect on hover-->
-<!--// TODO Add spine animation on select-->
-<!-- TODO Put book-add functionality in a side bar-->
-<!--TODO cover image-->
-<!-- TODO CRUD books-->
+<!--TODO cover image selection-->
+<!--TODO file link on click-->
+<!--Add tests-->
+<!--Go Public with big credit note-->
+
+<!-- Only do a 'boble' effect on hover-->
+<!-- Add spine animation on select-->
 <!--Book search bar-->
 <!--Resize books and give them colours (zijdelings ekaft)-->
 <!--Link book to an actual file-->
 <!--Make it possible to show big cover//boek draaien by default-->
 <!--Keep book sorted orders-->
-
+<!-- make moving more efficient? (= move mode?)-->
 
 <template>
 	<div class="bookshelf">
-		<!-- Draggable books using Vue.Draggable -->
-		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="onDragEnd">
+		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd"> // :group="{ name: 'books' }"
       <template #item="{ element }">
       <div class="book">
 				<div class="side spine">
@@ -22,30 +23,30 @@
 				</div>
 				<div class="side top"></div>
 				<div class="side cover" ></div>
-<!--    :style="{ backgroundImage: `url(${element.cover})` }"    -->
 			</div>
       </template>
 		</Draggable>
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import Draggable from 'vuedraggable'
 import {loadState} from "@nextcloud/initial-state";
 import {generateOcsUrl} from "@nextcloud/router";
 import axios from "@nextcloud/axios";
 import {showError} from "@nextcloud/dialogs";
 import {translate} from "@nextcloud/l10n";
+import {type Book, createBook} from "../models/Book.ts";
 
 export default {
   name: 'Bookshelf',
   components: {Draggable},
 
   data() {
-    let state = loadState('bookshelfs', 'bookshelfs-initial-state')
-    console.log("Loaded state:", state.$books, state)
+    let state: any = loadState('bookshelfs', 'bookshelfs-initial-state')
+    const books: Book[] = (state.$books || []).sort((a: Book, b: Book) => a.position - b.position);
     return {
-      books: state.$books,
+      books,
       newBookTitle: '',
       newBookAuthor: '',
       drag: false,
@@ -53,29 +54,39 @@ export default {
   },
 
   methods: {
-    addBook(title, author) {
+    addBook(title: string, author: string) {
       const options = {
         title,
-        author
+        author,
+        position: this.books.length,
       }
       const url = generateOcsUrl('apps/bookshelfs/api/v1/books')
       axios.post(url, options).then(response => {
-        this.books.push(response.data.ocs.data)
+        this.books.push(createBook(response.data.ocs.data))
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error adding book'))
         console.error(error)
       })
-    },onDragEnd() {
+    }, onDragEnd() {
       this.drag = false
       this.updateBookOrder()
     },
     updateBookOrder() {
-      // TODO Make this persistent + more efficient
-      let books2 = this.books.map((book, index) => ({
-        ...book,
-        id: index
-      }))
-      console.log("updatedBOokOrder", this.books, books2)
+      this.books.forEach((book: Book, index: number) => {
+        book.position = index
+        const url = generateOcsUrl(`apps/bookshelfs/api/v1/books/${book.id}`)
+        const options = {
+          position: book.position,
+        }
+        axios.put(url, options).catch((error) => {
+          showError(translate('bookshelfs', 'Error updating books'))
+          console.error(error)
+        })
+      })
+      this.sort()
+    },
+    sort() {
+      this.books =  this.books.sort((a: Book, b: Book) => a.position - b.position);
     }
   }
 }

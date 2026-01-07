@@ -10,7 +10,7 @@ use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version1000Date20260107111056 extends SimpleMigrationStep {
+class Version1000Date20260107110456 extends SimpleMigrationStep {
 
     /**
      * @param IOutput $output
@@ -49,8 +49,12 @@ class Version1000Date20260107111056 extends SimpleMigrationStep {
                 'notnull' => true,
                 'length' => 4,
             ]);
+            $table->addColumn('position', Types::BIGINT, [
+                'notnull' => true,
+                'length' => 4,
+            ]);
             $table->setPrimaryKey(['id']);
-            $table->addIndex(['user_id'], 'bookshelfs'); // TODO Redo db creation as we did not do a migration with this index name
+            $table->addIndex(['user_id'], 'bookshelfs');
         }
 
         return $schema;
