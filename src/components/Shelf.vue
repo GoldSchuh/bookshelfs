@@ -2,32 +2,16 @@
 <!--// TODO Add spine animation on select-->
 <!-- TODO Put book-add functionality in a side bar-->
 <!--TODO cover image-->
-<!-- TODO Persistent books-->
 <!-- TODO CRUD books-->
 <!--Book search bar-->
 <!--Resize books and give them colours (zijdelings ekaft)-->
 <!--Link book to an actual file-->
 <!--Make it possible to show big cover//boek draaien by default-->
+<!--Keep book sorted orders-->
+
 
 <template>
 	<div class="bookshelf">
-<!--    &lt;!&ndash; Form to add a new book &ndash;&gt;-->
-<!--    <div class="add-book-form">-->
-<!--      <input-->
-<!--          v-model="newBookTitle"-->
-<!--          type="text"-->
-<!--          placeholder="Enter Book Title"-->
-<!--          class="input-title"-->
-<!--      />-->
-<!--      <input-->
-<!--          v-model="newBookAuthor"-->
-<!--          type="text"-->
-<!--          placeholder="Enter Book Author"-->
-<!--          class="input-author"-->
-<!--      />-->
-<!--      <button @click="addBook" class="book-add">Add</button>-->
-<!--    </div>-->
-
 		<!-- Draggable books using Vue.Draggable -->
 		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="drag=false">
       <template #item="{ element }">
@@ -48,22 +32,20 @@
 <script>
 import Draggable from 'vuedraggable'
 import {loadState} from "@nextcloud/initial-state";
-
-let nextId = 4
+import {generateOcsUrl} from "@nextcloud/router";
+import axios from "@nextcloud/axios";
+import {showError} from "@nextcloud/dialogs";
+import {translate} from "@nextcloud/l10n";
 
 export default {
   name: 'Bookshelf',
-  components: { Draggable },
+  components: {Draggable},
 
   data() {
     let state = loadState('bookshelfs', 'bookshelfs-initial-state')
-    console.log("Loaded state:", state)
+    console.log("Loaded state:", state.$books, state)
     return {
-      books: [
-        { id: 1, title: 'The Great Gatsby', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
-        { id: 2, title: '1984', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
-        { id: 3, title: 'To Kill a Mockingbird', author: 'W.S.', cover: "/img/object-oriented-reengineering.png" },
-      ],
+      books: state.$books,
       newBookTitle: '',
       newBookAuthor: '',
       drag: false,
@@ -72,18 +54,19 @@ export default {
 
   methods: {
     addBook(title, author) {
-      if (!title || !author) return
-
-      this.books.push({
-        id: nextId++,
-        title: title,
-        author: author,
+      const options = {
+        title,
+        author
+      }
+      const url = generateOcsUrl('apps/bookshelfs/api/v1/books')
+      axios.post(url, options).then(response => {
+        this.books.push(response.data.ocs.data)
+      }).catch((error) => {
+        showError(translate('bookshelfs', 'Error adding book'))
+        console.error(error)
       })
-
-      // this.newBookTitle = ''
-      // this.newBookAuthor = ''
     },
-  },
+  }
 }
 </script>
 

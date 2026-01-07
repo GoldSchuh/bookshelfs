@@ -46,10 +46,8 @@ class PageController extends Controller {
 		 		} catch (\Exception | \Throwable $e) {
 		 			$books = [];
 		 		}
-//		$selectedNoteId = (int)$this->config->getUserValue($this->userId, Application::APP_ID, 'selected_note_id', '0');
 		$state = [
 			'$books' => $books,
-//			'selected_note_id' => $selectedNoteId,
 		];
 		$this->initialStateService->provideInitialState('bookshelfs-initial-state', $state); // TODO Fix initial state
 		return new TemplateResponse(Application::APP_ID, 'index');
