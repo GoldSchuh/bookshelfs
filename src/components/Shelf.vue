@@ -13,7 +13,7 @@
 <template>
 	<div class="bookshelf">
 		<!-- Draggable books using Vue.Draggable -->
-		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="drag=false">
+		<Draggable v-model="books" class="bookshelf-inner" item-key="id" :group="{ name: 'books' }" @start="drag=true" @end="onDragEnd">
       <template #item="{ element }">
       <div class="book">
 				<div class="side spine">
@@ -65,7 +65,18 @@ export default {
         showError(translate('bookshelfs', 'Error adding book'))
         console.error(error)
       })
+    },onDragEnd() {
+      this.drag = false
+      this.updateBookOrder()
     },
+    updateBookOrder() {
+      // TODO Make this persistent + more efficient
+      let books2 = this.books.map((book, index) => ({
+        ...book,
+        id: index
+      }))
+      console.log("updatedBOokOrder", this.books, books2)
+    }
   }
 }
 </script>
