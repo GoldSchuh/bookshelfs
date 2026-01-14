@@ -5,28 +5,25 @@
         <Bookshelf ref="bookshelf"/>
     </NcAppContent>
   </NcContent>
-
 </template>
 
 <script>
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import Bookshelf from './components/Shelf.vue'
 import Nav from "./components/Nav.vue";
-import NcEmptyContent from "@nextcloud/vue/components/NcEmptyContent";
 import NcContent from "@nextcloud/vue/components/NcContent";
 
 export default {
 	name: 'App',
 	components: {
     NcContent,
-    NcEmptyContent,
 		NcAppContent,
 		Bookshelf,
     Nav,
 	},
   methods: {
-    addBook({ title, author }) {
-      this.$refs.bookshelf.addBook(title, author)
+    addBook({ title, author, url, file}) {
+      this.$refs.bookshelf.addBook(title, author, url, file);
     }
   }
 }

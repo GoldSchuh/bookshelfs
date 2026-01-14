@@ -3,43 +3,49 @@
     <!-- Form to add a new book -->
     <div class="add-book-form">
       <input
-          v-model="newBookTitle"
+          v-model="title"
           type="text"
           placeholder="Enter Book Title"
           class="input-title"
       />
       <input
-          v-model="newBookAuthor"
+          v-model="author"
           type="text"
           placeholder="Enter Book Author"
           class="input-author"
       />
       <input
-          v-model="newBookUrl"
+          v-model="url"
           type="text"
-          placeholder="Enter URL or select from your Nextcloud instance on the right"
+          placeholder="Enter Picture URL or select from your Nextcloud instance on the right"
       />
-      <button
-          type="button"
-          :title="'Pick a local image'"
-          @click="pickImage"
-      >
-        <span class="icon-category-multimedia"></span>
-      </button>
+        <button
+            type="button"
+            title="'Pick a local image'"
+            @click="pickImage"
+        >
+          <span class="icon-category-multimedia"></span>
+        </button>
+<!--      TODO show actual file or image instead of path/id (make issue)-->
+      <input
+          v-model="file"
+          type="text"
+          placeholder="Enter File URL or select from your Nextcloud instance on the right"
+      />
+        <button
+            type="button"
+            title="'Pick a local file'"
+            @click="pickEbook"
+        >
+                  <span class="icon-category-files"></span>
+        </button>
       <button @click="addBook" class="book-add">Add</button>
     </div>
   </NcAppNavigation>
 </template>
 
 <script>
-import FileExportOutlineIcon from 'vue-material-design-icons/FileExportOutline.vue'
-import PlusIcon from 'vue-material-design-icons/Plus.vue'
-import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcAppNavigationNewItem from '@nextcloud/vue/components/NcAppNavigationNewItem'
 import { translate } from '@nextcloud/l10n'
 import {getFilePickerBuilder} from '@nextcloud/dialogs';
 
@@ -48,37 +54,33 @@ export default {
 
   components: {
     NcAppNavigation,
-    NcEmptyContent,
-    NcAppNavigationItem,
-    NcActionButton,
-    NcAppNavigationNewItem,
-    FileExportOutlineIcon,
-    PlusIcon,
-    TrashCanOutlineIcon,
   },
 
   data() {
     return {
-      newBookTitle: '',
-      newBookAuthor: '',
-      newBookUrl: '',
-      newBookFile: -1,
+      title: '',
+      author: '',
+      url: '',
+      file: '',
+      file_name: ''
     }
   },
   methods: {
     addBook() {
-      if (!this.newBookTitle || !this.newBookAuthor) {
-        this.newBookTitle = 'a';
-        this.newBookAuthor = 'a';
+      if (!this.title || !this.author) {
+        this.title = 'a';
+        this.author = 'a';
       }
       this.$emit('add-book', {
-        title: this.newBookTitle,
-        author: this.newBookAuthor,
-        url: this.newBookUrl
+        title: this.title,
+        author: this.author,
+        url: this.url,
+        file: this.file
       })
-      this.newBookTitle = ''
-      this.newBookAuthor = ''
-      this.newBookUrl = ''
+      this.title = ''
+      this.author = ''
+      this.url = ''
+      this.file = ''
     },
     pickImage() {
       getFilePickerBuilder('Path to your book cover image',)
@@ -88,7 +90,18 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              this.newBookUrl = selectedPaths[0]._data.attributes.filename || '';
+              this.url = selectedPaths[0]._data.attributes.filename || '';
+            }
+          })
+          .build().pick();
+    },
+    pickEbook() {
+      getFilePickerBuilder('Path to your book',)
+          .addButton({
+            label: 'Choose',
+            variant: 'primary',
+            callback: (selectedPaths) => {
+              this.file = selectedPaths[0]._data.id || -1;
             }
           })
           .build().pick();

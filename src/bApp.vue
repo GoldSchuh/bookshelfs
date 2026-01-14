@@ -39,7 +39,7 @@ import { translate } from '@nextcloud/l10n'
 import { Timer } from '../utils.js'
 
 export default {
-  name: 'App',
+  name: 'bApp',
 
   components: {
     NoteIcon,

@@ -22,8 +22,8 @@
 					<span class="spine-author">{{ element.author }}</span>
 				</div>
 				<div class="side top"></div>
-<!--        TODO make sure we can load a preview-->
-        <div class="side cover" :style="{ backgroundImage: `url(http://nextcloud.local/index.php/apps/cookbook/webapp/recipes/96/image?size=thumb)` }"></div>
+<!--        TODO translate url to preview-->
+        <div class="side cover" :style="{ backgroundImage: `url(${element.url})` }"></div>
       </div>
       </template>
 		</Draggable>
@@ -48,22 +48,24 @@ export default {
     const books: Book[] = (state.$books || []).sort((a: Book, b: Book) => a.position - b.position);
     return {
       books,
-      newBookTitle: '',
-      newBookAuthor: '',
+      title: '',
+      author: '',
       drag: false,
     }
   },
 
   methods: {
-    addBook(title: string, author: string) {
+    addBook(title: string, author: string, url: string, file: number) {
       const options = {
         title,
         author,
         position: this.books.length,
+        url,
+        file
         //
       }
-      const url = generateOcsUrl('apps/bookshelfs/api/v1/books')
-      axios.post(url, options).then(response => {
+      const api = generateOcsUrl('apps/bookshelfs/api/v1/books')
+      axios.post(api, options).then(response => {
         this.books.push(createBook(response.data.ocs.data))
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error adding book'))
@@ -183,7 +185,7 @@ $color_3: goldenrod;
 	width: 190px;
 	height: 280px;
 	top: 0;
-	background-image: url("http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png"); //"../img/object-oriented-reengineering.png" not work but // http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png does resolve but this not? Why is it 'apps-extra'?
+	//background-image: url("http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png"); //"../img/object-oriented-reengineering.png" not work but // http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png does resolve but this not? Why is it 'apps-extra'?
 	background-size: contain;
 	background-repeat: round;
 	left: 50px;
