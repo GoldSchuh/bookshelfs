@@ -80,15 +80,19 @@ class BookMapper extends QBMapper {
 	 * @param string $title
 	 * @param string $author
 	 * @param int $position
+	 * @param string $url
+	 * @param int $file
 	 * @return Book
 	 * @throws Exception
 	 */
-	public function createBook(string $userId, string $title, string $author, int $position): Book {
+	public function createBook(string $userId, string $title, string $author, int $position, string $url, int $file): Book {
 		$book = new Book();
 		$book->setUserId($userId);
 		$book->setTitle($title);
 		$book->setAuthor($author);
 		$book->setPosition($position);
+		$book->setUrl($url);
+		$book->setFile($file);
 		return $this->insert($book);
 	}
 
@@ -98,11 +102,13 @@ class BookMapper extends QBMapper {
 	 * @param string $title
 	 * @param string $author
 	 * @param int $position
+	 * @param string $url
+	 * @param int $file
 	 * @return Book |null
 	 * @throws Exception
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null): ?Book {
-		if ($title === null && $author === null && $position === null) {
+	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file): ?Book {
+		if ($title === null && $author === null && $position === null && $url === null && $file === null) {
 			return null;
 		}
 		try {
@@ -118,6 +124,12 @@ class BookMapper extends QBMapper {
 		}
 		if ($position !== null) {
 			$book->setPosition($position);
+		}
+		if ($url !== null) {
+			$book->setUrl($url);
+		}
+		if ($file !== null) {
+			$book->setFile($file);
 		}
 		return $this->update($book);
 	}

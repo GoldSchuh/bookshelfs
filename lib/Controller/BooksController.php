@@ -51,9 +51,9 @@ class BooksController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/books', requirements: self::REQUIREMENTS)]
-	public function addUserBook(string $title, string $author = '', int $position=-1): DataResponse {
+	public function addUserBook(string $title, string $author = '', int $position=-1, string $url= '', int $file=-1): DataResponse {
 		try {
-			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position);
+			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position, $url, $file);
 			return new DataResponse($book);
 		} catch (Exception|Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -68,9 +68,9 @@ class BooksController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/books/{id}', requirements: self::REQUIREMENTS)]
-	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null): DataResponse {
+	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null): DataResponse {
 		try {
-			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position);
+			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position, $url, $file);
 			return new DataResponse($book);
 		} catch (Exception|Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

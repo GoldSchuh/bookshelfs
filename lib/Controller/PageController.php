@@ -49,7 +49,7 @@ class PageController extends Controller {
 		$state = [
 			'$books' => $books,
 		];
-		$this->initialStateService->provideInitialState('bookshelfs-initial-state', $state); // TODO Fix initial state
+		$this->initialStateService->provideInitialState('bookshelfs-initial-state', $state);
 		return new TemplateResponse(Application::APP_ID, 'index');
 	}
 }

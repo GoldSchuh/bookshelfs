@@ -10,7 +10,7 @@ use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version1000Date20260107110456 extends SimpleMigrationStep {
+class Version0000Date20260114110456 extends SimpleMigrationStep {
 
     /**
      * @param IOutput $output
@@ -50,6 +50,13 @@ class Version1000Date20260107110456 extends SimpleMigrationStep {
                 'length' => 4,
             ]);
             $table->addColumn('position', Types::BIGINT, [
+                'notnull' => true,
+                'length' => 4,
+            ]);
+            $table->addColumn('url', Types::TEXT, [
+                'notnull' => true,
+            ]);
+            $table->addColumn('file', Types::BIGINT, [
                 'notnull' => true,
                 'length' => 4,
             ]);

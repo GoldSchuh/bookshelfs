@@ -12,7 +12,6 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 class Application extends App implements IBootstrap {
 
     public const APP_ID = 'bookshelfs';
-	public const NOTE_FOLDER_NAME = 'TutorialNotes'; // TODO remove
 
     public function __construct(array $urlParams = []) {
         parent::__construct(self::APP_ID, $urlParams);

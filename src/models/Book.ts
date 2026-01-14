@@ -4,7 +4,8 @@ export interface Book {
     title: string
     author: string
     position: number
-    // cover?: string
+    url: string
+    file: number
 }
 
 export function createBook(data: any): Book {
@@ -14,6 +15,7 @@ export function createBook(data: any): Book {
         title: data.title,
         author: data.author,
         position: data.position,
-        // cover: data.cover,
+        url: data.url,
+        file: data.file
     }
 }
