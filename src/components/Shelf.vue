@@ -1,4 +1,4 @@
-<!--TODO cover image selection-->
+<!--TODO cover image selection EditImageField.vue-->
 <!--TODO file link on click-->
 <!--Add tests-->
 <!--Go Public with big credit note-->
@@ -22,8 +22,9 @@
 					<span class="spine-author">{{ element.author }}</span>
 				</div>
 				<div class="side top"></div>
-				<div class="side cover" ></div>
-			</div>
+<!--        TODO make sure we can load a preview-->
+        <div class="side cover" :style="{ backgroundImage: `url(http://nextcloud.local/index.php/apps/cookbook/webapp/recipes/96/image?size=thumb)` }"></div>
+      </div>
       </template>
 		</Draggable>
 	</div>
@@ -59,6 +60,7 @@ export default {
         title,
         author,
         position: this.books.length,
+        //
       }
       const url = generateOcsUrl('apps/bookshelfs/api/v1/books')
       axios.post(url, options).then(response => {
