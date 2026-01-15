@@ -8,7 +8,7 @@ export interface Book {
     file: number
 }
 
-export function createBook(data: any): Book {
+export function constructBook(data: any): Book {
     return {
         id: data.id,
         user_id: data.user_id,

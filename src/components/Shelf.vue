@@ -1,29 +1,30 @@
-<!--TODO cover image selection EditImageField.vue-->
-<!--TODO file link on click-->
-<!--Add tests-->
+<!--TODO file link on double click (prefer open, else download)-->
+<!--TODO Delete red book button-->
+<!--TODO Update book UI (=create ui)-->
+<!--Clean up-->
+<!--Rename variables-->
 <!--Go Public with big credit note-->
-
-<!-- Only do a 'boble' effect on hover-->
-<!-- Add spine animation on select-->
+<!--Add tests-->
+<!--Use typescript everywhere?-->
 <!--Book search bar-->
-<!--Resize books and give them colours (zijdelings ekaft)-->
-<!--Link book to an actual file-->
-<!--Make it possible to show big cover//boek draaien by default-->
-<!--Keep book sorted orders-->
+<!--Resize books and give them colours (zijdelingse kaft)-->
+<!--Improve the shelve look-->
+<!--Add translations-->
+<!--Make it possible to show big cover/boek draaien by default-->
 <!-- make moving more efficient? (= move mode?)-->
+<!--Later: Customise per book size & colour?-->
 
 <template>
 	<div class="bookshelf">
-		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd"> // :group="{ name: 'books' }"
+		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd">
       <template #item="{ element }">
-      <div class="book">
+      <div class="book" @click="select(element)">
 				<div class="side spine">
 					<span class="spine-title">{{ element.title }}</span>
 					<span class="spine-author">{{ element.author }}</span>
 				</div>
 				<div class="side top"></div>
-<!--        TODO translate url to preview-->
-        <div class="side cover" :style="{ backgroundImage: `url(${element.url})` }"></div>
+        <div class="side cover" :style="{ backgroundImage: `url(${getPath(element)})` }"></div>
       </div>
       </template>
 		</Draggable>
@@ -37,11 +38,17 @@ import {generateOcsUrl} from "@nextcloud/router";
 import axios from "@nextcloud/axios";
 import {showError} from "@nextcloud/dialogs";
 import {translate} from "@nextcloud/l10n";
-import {type Book, createBook} from "../models/Book.ts";
+import {type Book, constructBook} from "../models/Book.ts";
+import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
+import NcAppSidebarTab from "@nextcloud/vue/components/NcAppSidebarTab";
+import { generateUrl, imagePath } from '@nextcloud/router'
+import {preloadImage} from "@nextcloud/vue";
 
 export default {
   name: 'Bookshelf',
-  components: {Draggable},
+  components: {
+    Draggable,
+  },
 
   data() {
     let state: any = loadState('bookshelfs', 'bookshelfs-initial-state')
@@ -55,18 +62,17 @@ export default {
   },
 
   methods: {
-    addBook(title: string, author: string, url: string, file: number) {
+    create(title: string, author: string, url: string, file: number) {
       const options = {
         title,
         author,
         position: this.books.length,
         url,
         file
-        //
       }
       const api = generateOcsUrl('apps/bookshelfs/api/v1/books')
       axios.post(api, options).then(response => {
-        this.books.push(createBook(response.data.ocs.data))
+        this.books.push(constructBook(response.data.ocs.data))
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error adding book'))
         console.error(error)
@@ -91,6 +97,14 @@ export default {
     },
     sort() {
       this.books =  this.books.sort((a: Book, b: Book) => a.position - b.position);
+    },
+    getPath(book: Book) {
+      const img_link = `/index.php/core/preview?fileId=${book.url}&x=190&y=280`
+//      preloadImage(img_link)
+      return(img_link)
+    },
+    select(book: Book) {
+      this.$emit('select', book)
     }
   }
 }
@@ -105,7 +119,6 @@ $color_3: goldenrod;
 	--spine-pyramid: linear-gradient(315deg, transparent 75%, rgba(255, 255, 255, 0.1) 0),
 }
 
-// Main component
 .bookshelf {
 	width: 100%;
 	margin: 50px;
@@ -113,7 +126,6 @@ $color_3: goldenrod;
 	flex-wrap: wrap;
 }
 
-/* Books */
 .bookshelf-inner {
   display: flex;
   flex-wrap: wrap;
@@ -137,7 +149,7 @@ $color_3: goldenrod;
 
 .side {
 	position: absolute;
-	border: 2px solid black;
+	border: 2px solid var(--color-border-maxcontrast);
 	border-radius: 3px;
 	font-weight: bold;
 	color: $color_1;
@@ -185,7 +197,6 @@ $color_3: goldenrod;
 	width: 190px;
 	height: 280px;
 	top: 0;
-	//background-image: url("http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png"); //"../img/object-oriented-reengineering.png" not work but // http://nextcloud.local/apps-extra/bookshelfs/img/object-oriented-reengineering.png does resolve but this not? Why is it 'apps-extra'?
 	background-size: contain;
 	background-repeat: round;
 	left: 50px;

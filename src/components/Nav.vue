@@ -1,23 +1,23 @@
 <template>
   <NcAppNavigation>
     <!-- Form to add a new book -->
-    <div class="add-book-form">
+    <div class="create-book-form">
       <input
           v-model="title"
           type="text"
-          placeholder="Enter Book Title"
+          :placeholder="translate('bookshelfs', 'Title')"
           class="input-title"
       />
       <input
           v-model="author"
           type="text"
-          placeholder="Enter Book Author"
+          :placeholder="translate('bookshelfs', 'Author')"
           class="input-author"
       />
       <input
           v-model="url"
           type="text"
-          placeholder="Enter Picture URL or select from your Nextcloud instance on the right"
+          :placeholder="translate('bookshelfs', 'Picture ID')"
       />
         <button
             type="button"
@@ -26,26 +26,26 @@
         >
           <span class="icon-category-multimedia"></span>
         </button>
-<!--      TODO show actual file or image instead of path/id (make issue)-->
       <input
           v-model="file"
           type="text"
-          placeholder="Enter File URL or select from your Nextcloud instance on the right"
+          :placeholder="translate('bookshelfs', 'File ID')"
       />
         <button
             type="button"
-            title="'Pick a local file'"
+            title="Pick a local file"
             @click="pickEbook"
         >
                   <span class="icon-category-files"></span>
         </button>
-      <button @click="addBook" class="book-add">Add</button>
     </div>
+    <NcAppNavigationNew :text="translate('bookshelfs', 'Create book')" @click="create"/>
   </NcAppNavigation>
 </template>
 
 <script>
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
 import { translate } from '@nextcloud/l10n'
 import {getFilePickerBuilder} from '@nextcloud/dialogs';
 
@@ -54,6 +54,7 @@ export default {
 
   components: {
     NcAppNavigation,
+    NcAppNavigationNew,
   },
 
   data() {
@@ -66,12 +67,13 @@ export default {
     }
   },
   methods: {
-    addBook() {
+    translate,
+    create() {
       if (!this.title || !this.author) {
         this.title = 'a';
         this.author = 'a';
       }
-      this.$emit('add-book', {
+      this.$emit('create', {
         title: this.title,
         author: this.author,
         url: this.url,
@@ -90,7 +92,9 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              this.url = selectedPaths[0]._data.attributes.filename || '';
+              this.url = selectedPaths[0]._data.id || '';
+              this.url = this.url.toString()
+              console.log(this.url)
             }
           })
           .build().pick();
@@ -111,30 +115,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/* Input */
-//.add-book-form {
-//  margin-bottom: 10px;
-//  display: flex;
-//  gap: 5px;
-//}
-//.input-title,
-//.input-author {
-//  padding: 8px;
-//  font-size: 14px;
-//  border: 1px solid #ccc;
-//  border-radius: 4px;
-//  width: 20vw;
-//  max-width: 160px;
-//  max-height: 16px;
-//}
-//.book-add {
-//  color: white;
-//  border: 1px solid #ccc;
-//  border-radius: 4px;
-//  cursor: pointer;
-//  max-height: 16px;
-//}
-//.book-add:hover {
-//  background-color: #45a049;
-//}
+.create-book-form {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
 </style>
