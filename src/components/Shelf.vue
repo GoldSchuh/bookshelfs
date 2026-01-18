@@ -1,11 +1,10 @@
 <!--TODO file link on double click (prefer open, else download)-->
-<!--TODO Delete red book button-->
-<!--TODO Update book UI (=create ui)-->
 <!--Clean up-->
+<!--Delete confirmation-->
 <!--Rename variables-->
 <!--Go Public with big credit note-->
 <!--Add tests-->
-<!--Use typescript everywhere?-->
+<!--Use typescript everywhere? -->
 <!--Book search bar-->
 <!--Resize books and give them colours (zijdelingse kaft)-->
 <!--Improve the shelve look-->
@@ -18,7 +17,7 @@
 	<div class="bookshelf">
 		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd">
       <template #item="{ element }">
-      <div class="book" @click="select(element)">
+      <div class="book" @click="select(element)" @dblclick="openInNewTab(element)">
 				<div class="side spine">
 					<span class="spine-title">{{ element.title }}</span>
 					<span class="spine-author">{{ element.author }}</span>
@@ -105,6 +104,25 @@ export default {
     },
     select(book: Book) {
       this.$emit('select', book)
+    },
+    deleteBook(book: Book) {
+      console.log(this.books, book)
+      const idx = this.books.findIndex((b: Book) => b.id === book.id)
+      console.log(idx)
+      if (idx !== -1) {
+        this.books.splice(idx, 1)
+      }
+    },
+    updateBook(book: Book) {
+      const idx = this.books.findIndex((b: Book) => b.id === book.id)
+      if (idx !== -1) {
+        this.books[idx] = book
+      }
+    },
+    openInNewTab(book: Book) {
+      const url = generateUrl(`/f/${book.file}`)
+      console.log(url)
+      window.open(url, '_blank')?.focus();
     }
   }
 }

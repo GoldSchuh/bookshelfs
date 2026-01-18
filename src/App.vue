@@ -4,7 +4,7 @@
     <NcAppContent>
         <Bookshelf ref="bookshelf" @select="select"/>
     </NcAppContent>
-    <Sidebar ref="sidebar"/>
+    <Sidebar ref="sidebar" @deleteBook="deleteBook" @updateBook="updateBook"/>
   </NcContent>
 </template>
 
@@ -30,6 +30,14 @@ export default {
     },
     select(book) {
       this.$refs.sidebar.select(book);
+    },
+    updateBook(book) {
+      console.log('ay')
+      this.$refs.bookshelf.updateBook(book);
+  },
+    deleteBook(book) {
+      console.log('ay')
+      this.$refs.bookshelf.deleteBook(book);
     }
   }
 }
