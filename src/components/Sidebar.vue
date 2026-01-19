@@ -72,6 +72,9 @@ export default {
           update.author = book.author;
           update.url = book.url;
           update.file = book.file;
+          update.colour = book.colour;
+          update.pattern = book.pattern;
+          update.height = book.height;
         }
       })
     },
@@ -82,7 +85,10 @@ export default {
         title: update.title,
         author: update.author,
         url: update.url,
-        file: update.file
+        file: update.file,
+        colour: update.colour,
+        pattern: update.pattern,
+        height: update.height,
       }
       const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + this.selected.id)
       axios.put(api, options).then(response => {

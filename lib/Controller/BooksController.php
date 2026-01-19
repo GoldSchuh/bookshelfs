@@ -44,16 +44,19 @@ class BooksController extends OCSController {
 		}
 	}
 
-	/**
-	 * @param string $title
-	 * @param string $author
-	 * @return DataResponse
-	 */
+    /**
+     * @param string $title
+     * @param string $author
+     * @param int $position
+     * @param string $url
+     * @param int $file
+     * @return DataResponse
+     */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/books', requirements: self::REQUIREMENTS)]
-	public function addUserBook(string $title, string $author = '', int $position=-1, string $url= '', int $file=-1): DataResponse {
+	public function addUserBook(string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): DataResponse {
 		try {
-			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position, $url, $file);
+			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
 			return new DataResponse($book);
 		} catch (Exception|Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -68,9 +71,9 @@ class BooksController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/books/{id}', requirements: self::REQUIREMENTS)]
-	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null): DataResponse {
+	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, string $colour = null, int $pattern = null, int $height = null): DataResponse {
 		try {
-			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position, $url, $file);
+			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
 			return new DataResponse($book);
 		} catch (Exception|Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

@@ -82,10 +82,13 @@ class BookMapper extends QBMapper {
 	 * @param int $position
 	 * @param string $url
 	 * @param int $file
+	 * @param string $colour
+	 * @param int $pattern
+	 * @param int $height
 	 * @return Book
 	 * @throws Exception
 	 */
-	public function createBook(string $userId, string $title, string $author, int $position, string $url, int $file): Book {
+	public function createBook(string $userId, string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): Book {
 		$book = new Book();
 		$book->setUserId($userId);
 		$book->setTitle($title);
@@ -93,6 +96,9 @@ class BookMapper extends QBMapper {
 		$book->setPosition($position);
 		$book->setUrl($url);
 		$book->setFile($file);
+		$book->setColour($colour);
+		$book->setPattern($pattern);
+		$book->setHeight($height);
 		return $this->insert($book);
 	}
 
@@ -104,11 +110,14 @@ class BookMapper extends QBMapper {
 	 * @param int $position
 	 * @param string $url
 	 * @param int $file
+	 * @param string $colour
+	 * @param int $pattern
+	 * @param int $height
 	 * @return Book |null
 	 * @throws Exception
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file): ?Book {
-		if ($title === null && $author === null && $position === null && $url === null && $file === null) {
+	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file, ?string $colour = null, ?int $pattern = null, ?int $height = null): ?Book {
+		if ($title === null && $author === null && $position === null && $url === null && $file === null && $colour === null && $pattern === null && $height === null) {
 			return null;
 		}
 		try {
@@ -130,6 +139,15 @@ class BookMapper extends QBMapper {
 		}
 		if ($file !== null) {
 			$book->setFile($file);
+		}
+		if ($colour !== null) {
+			$book->setColour($colour);
+		}
+		if ($pattern !== null) {
+			$book->setPattern($pattern);
+		}
+		if ($height !== null) {
+			$book->setHeight($height);
 		}
 		return $this->update($book);
 	}

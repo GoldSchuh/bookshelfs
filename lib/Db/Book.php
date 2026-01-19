@@ -18,7 +18,13 @@ use OCP\AppFramework\Db\Entity;
  * @method string getUrl()
  * @method void setUrl(string $url)
  * @method string getFile()
- * @method void setFile(int $url)
+ * @method void setFile(int $file)
+ * @method string getColour()
+ * @method void setColour(int $colour)
+ * @method string getPattern()
+ * @method void setPattern(int $pattern)
+ * @method string getHeight()
+ * @method void setHeight(int $height)
  */
 class Book extends Entity implements \JsonSerializable {
 
@@ -34,6 +40,12 @@ class Book extends Entity implements \JsonSerializable {
     protected $url;
     /** @var int */
     protected $file;
+    /** @var string */
+    protected $colour;
+    /** @var int */
+    protected $pattern;
+    /** @var int */
+    protected $height;
 
 	public function __construct() {
 		$this->addType('userId', 'string');
@@ -42,6 +54,10 @@ class Book extends Entity implements \JsonSerializable {
 		$this->addType('position', 'int');
         $this->addType('url', 'text');
         $this->addType('file', 'int');
+        $this->addType('colour', 'text');
+        $this->addType('pattern', 'int');
+        $this->addType('height', 'int');
+
     }
 
 	#[\ReturnTypeWillChange]
@@ -54,6 +70,9 @@ class Book extends Entity implements \JsonSerializable {
 			'position' => $this->position,
             'url' => $this->url,
             'file' => $this->file,
+            'colour' => $this->colour,
+            'pattern' => $this->pattern,
+            'height' => $this->height,
 		];
 	}
 }

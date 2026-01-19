@@ -6,6 +6,9 @@ export interface Book {
     position: number
     url: string
     file: number
+    colour: string
+    pattern: number
+    height: number
 }
 
 export function constructBook(data: any): Book {
@@ -16,6 +19,9 @@ export function constructBook(data: any): Book {
         author: data.author,
         position: data.position,
         url: data.url,
-        file: data.file
+        file: data.file,
+        colour: data.colour,
+        pattern: data.pattern,
+        height: data.height,
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <NcContent app-name="bookshelfs">
-    <Nav @create="create"/>
+    <Nav @createBook="createBook"/>
     <NcAppContent>
         <Bookshelf ref="bookshelf" @select="select"/>
     </NcAppContent>
@@ -25,18 +25,16 @@ export default {
     Nav,
 	},
   methods: {
-    create({ title, author, url, file}) {
-      this.$refs.bookshelf.create(title, author, url, file);
+    createBook(book) {
+      this.$refs.bookshelf.createBook(book);
     },
     select(book) {
       this.$refs.sidebar.select(book);
     },
     updateBook(book) {
-      console.log('ay')
       this.$refs.bookshelf.updateBook(book);
   },
     deleteBook(book) {
-      console.log('ay')
       this.$refs.bookshelf.deleteBook(book);
     }
   }

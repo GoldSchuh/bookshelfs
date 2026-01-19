@@ -14,6 +14,24 @@
           class="input-author"
       />
       <input
+          v-model="colour"
+          type="text"
+          :placeholder="translate('bookshelfs', 'Colour')"
+          class="input-author"
+      />
+      <input
+          v-model="pattern"
+          type="text"
+          :placeholder="translate('bookshelfs', 'Pattern ID')"
+          class="input-author"
+      />
+      <input
+          v-model="height"
+          type="text"
+          :placeholder="translate('bookshelfs', 'Height')"
+          class="input-author"
+      />
+      <input
           v-model="url"
           type="text"
           :placeholder="translate('bookshelfs', 'Picture ID')"
@@ -53,7 +71,9 @@ export default {
       author: '',
       url: '',
       file: '',
-      file_name: ''
+      colour: '',
+      pattern: '',
+      height: '',
     }
   },
   methods: {
