@@ -44,14 +44,17 @@ class BooksController extends OCSController {
 		}
 	}
 
-    /**
-     * @param string $title
-     * @param string $author
-     * @param int $position
-     * @param string $url
-     * @param int $file
-     * @return DataResponse
-     */
+	/**
+	 * @param string $title
+	 * @param string $author
+	 * @param int $position
+	 * @param string $url
+	 * @param int $file
+	 * @param string $colour
+	 * @param int $pattern
+	 * @param int $height
+	 * @return DataResponse
+	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/books', requirements: self::REQUIREMENTS)]
 	public function addUserBook(string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): DataResponse {
@@ -71,7 +74,7 @@ class BooksController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/books/{id}', requirements: self::REQUIREMENTS)]
-	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, string $colour = null, int $pattern = null, int $height = null): DataResponse {
+	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): DataResponse {
 		try {
 			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
 			return new DataResponse($book);

@@ -39,9 +39,9 @@ class Version0000Date20260119110456 extends SimpleMigrationStep {
 			$table->addColumn('pattern', Types::SMALLINT, [
 				'notnull' => true,
 			]);
-            $table->addColumn('height', Types::SMALLINT, [
-                'notnull' => true,
-            ]);
+			$table->addColumn('height', Types::SMALLINT, [
+				'notnull' => true,
+			]);
 		}
 		return $schema;
 	}

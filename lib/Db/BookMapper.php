@@ -105,18 +105,18 @@ class BookMapper extends QBMapper {
 	/**
 	 * @param int $id
 	 * @param string $userId
-	 * @param string $title
-	 * @param string $author
-	 * @param int $position
-	 * @param string $url
-	 * @param int $file
-	 * @param string $colour
-	 * @param int $pattern
-	 * @param int $height
+	 * @param string|null $title
+	 * @param string|null $author
+	 * @param int|null $position
+	 * @param string|null $url
+	 * @param int|null $file
+	 * @param string|null $colour
+	 * @param int|null $pattern
+	 * @param int|null $height
 	 * @return Book |null
 	 * @throws Exception
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file, ?string $colour = null, ?int $pattern = null, ?int $height = null): ?Book {
+	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): ?Book {
 		if ($title === null && $author === null && $position === null && $url === null && $file === null && $colour === null && $pattern === null && $height === null) {
 			return null;
 		}

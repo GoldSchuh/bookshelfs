@@ -1,43 +1,40 @@
 <template>
-  <NcAppSidebar v-if="open" @close="open = false">
+  <NcAppSidebar v-if="open" name="bookshelfs-sidebar" @close="onClose">
       <div v-if="selected!==null">
         <Form ref="updateBook"/>
-        <NcAppSidebarTab/>
-
         <NcButton
             aria-label="Example text"
-            :disabled
-            :size
+
             :text="translate('bookshelfs', 'Update book')" @click="updateBook"
             variant="primary"
         />
         <NcButton
-            :disabled
-            :size
             :text="translate('bookshelfs', 'Delete book')" @click="deleteBook"
             variant="error"
         />
-
-        <div class="side cover" :style="{ backgroundImage: `url(${getPath(selected)})` }"></div>
-
+        <div class="side cover" :style="{ backgroundImage: `url(${getPath(selected)})` }"/>
       </div>
     </NcAppSidebar>
 </template>
 
-<script>
+<script lang="ts">
+// @ts-ignore
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
+// @ts-ignore
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
+// @ts-ignore
 import IconShareVariantOutline from 'vue-material-design-icons/ShareVariantOutline.vue'
 import NcAppSidebarTab from  '@nextcloud/vue/components/NcAppSidebarTab'
 import NcAppSidebar from  '@nextcloud/vue/components/NcAppSidebar'
+// @ts-ignore
 import Form from "./Form.vue";
-import {getPath} from '../utils2.ts';
+import {getPath} from '../utils.ts';
 import NcAppNavigationNew from "@nextcloud/vue/components/NcAppNavigationNew";
 import {NcButton} from "@nextcloud/vue";
 import {translate} from "@nextcloud/l10n";
 import {generateOcsUrl} from "@nextcloud/router";
 import axios from "@nextcloud/axios";
-import {constructBook} from "../models/Book.ts";
+import {type Book, constructBook} from "../models/Book.ts";
 import {showError} from "@nextcloud/dialogs";
 
 export default {
@@ -55,18 +52,21 @@ export default {
   data() {
     return {
       open: false,
-      selected: null
+      selected: null as unknown as Book,
     }
   },
 
   methods: {
     translate,
     getPath,
-    select(book) {
+    onClose() {
+      this.open = false;
+    },
+    select(book: Book) {
       this.selected = book
       this.open = true
       this.$nextTick(() => { // Render after mount
-        const update = this.$refs.updateBook;
+        const update: any = this.$refs.updateBook;
         if (update) {
           update.title = book.title;
           update.author = book.author;
@@ -79,9 +79,9 @@ export default {
       })
     },
     updateBook() {
-      const update = this.$refs.updateBook;
+      const update: any = this.$refs.updateBook;
       const options = {
-        id: this.selected.id,
+        id: this?.selected.id,
         title: update.title,
         author: update.author,
         url: update.url,
@@ -92,23 +92,22 @@ export default {
       }
       const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + this.selected.id)
       axios.put(api, options).then(response => {
-        // this.books.push(constructBook(response.data.ocs.data))
-        this.selected = constructBook(response.data.ocs.data) // FIXME Spare out a full API call and adjust data
+        this.selected = constructBook(response.data.ocs.data)
         this.$emit('updateBook', this.selected);
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error updating book'))
         console.error(error)
       })
     },
-    deleteBook() { // TODO transform to separate functions?
+    deleteBook() {
       const options = {
         id: this.selected.id
       }
       const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + this.selected.id)
-      axios.delete(api, options).then(response => {
-        // this.books.push(constructBook(response.data.ocs.data))
+      // @ts-ignore
+      axios.delete(api, options).then(() => {
         this.$emit('deleteBook', this.selected);
-        this.selected = null
+        this.selected = null as unknown as Book;
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error updating book'))
         console.error(error)

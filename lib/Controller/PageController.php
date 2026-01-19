@@ -41,11 +41,11 @@ class PageController extends Controller {
 	#[FrontpageRoute(verb: 'GET', url: '/')]
 	public function index(): TemplateResponse {
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
-		 		try {
-		 			$books = $this->bookMapper->getBooksOfUser($this->userId);
-		 		} catch (\Exception | \Throwable $e) {
-		 			$books = [];
-		 		}
+		try {
+			$books = $this->bookMapper->getBooksOfUser($this->userId);
+		} catch (\Exception|\Throwable $e) {
+			$books = [];
+		}
 		$state = [
 			'$books' => $books,
 		];

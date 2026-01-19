@@ -20,7 +20,7 @@ use OCP\AppFramework\Db\Entity;
  * @method string getFile()
  * @method void setFile(int $file)
  * @method string getColour()
- * @method void setColour(int $colour)
+ * @method void setColour(string $colour)
  * @method string getPattern()
  * @method void setPattern(int $pattern)
  * @method string getHeight()

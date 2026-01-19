@@ -58,7 +58,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { translate } from '@nextcloud/l10n'
 import {getFilePickerBuilder} from '@nextcloud/dialogs';
 
@@ -86,7 +86,8 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              this.url = selectedPaths[0]._data.id || '';
+              // @ts-ignore
+              this.url = selectedPaths[0]?._data.id || '';
               this.url = this.url.toString()
               console.log(this.url)
             }
@@ -99,7 +100,8 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              this.file = selectedPaths[0]._data.id || -1;
+              // @ts-ignore
+              this.file = selectedPaths[0]?._data.id || -1;
             }
           })
           .build().pick();

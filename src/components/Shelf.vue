@@ -1,20 +1,3 @@
-<!--Create different shelves/categories (hide/show toggle in sidebar)-->
-<!--Clean up-->
-<!--Delete confirmation-->
-<!--Rename variables-->
-<!--Go Public with big credit note-->
-<!--Add tests-->
-<!--Use typescript everywhere? -->
-<!--Book search bar-->
-<!--Resize books and give them colours (zijdelingse kaft)-->
-<!--Make colours consistent-->
-<!--Improve the shelve look-->
-<!--Add translations-->
-<!--Make it possible to show big cover/boek draaien by default-->
-<!-- make moving more efficient? (= move mode?)-->
-<!--export import feature-->
-<!--Later: Customise per book size & colour?-->
-
 <template>
 	<div class="bookshelf">
 		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd()">
@@ -47,7 +30,6 @@ export default {
   components: {
     Draggable,
   },
-
   data() {
     let state: any = loadState('bookshelfs', 'bookshelfs-initial-state')
     const books: Book[] = (state.$books || []).sort((a: Book, b: Book) => a.position - b.position);
@@ -56,10 +38,8 @@ export default {
       title: '',
       author: '',
       drag: false,
-
     }
   },
-
   methods: {
     getPattern(book: Book) {
       const availablePatterns = [
@@ -111,16 +91,13 @@ export default {
     },
     getPath(book: Book) {
       const img_link = `/index.php/core/preview?fileId=${book.url}&x=190&y=280`
-//      preloadImage(img_link)
       return(img_link)
     },
     select(book: Book) {
       this.$emit('select', book)
     },
     deleteBook(book: Book) {
-      console.log(this.books, book)
       const idx = this.books.findIndex((b: Book) => b.id === book.id)
-      console.log(idx)
       if (idx !== -1) {
         this.books.splice(idx, 1)
       }
@@ -133,7 +110,6 @@ export default {
     },
     openInNewTab(book: Book) {
       const url = generateUrl(`/f/${book.file}`)
-      console.log(url)
       window.open(url, '_blank')?.focus();
     }
   }
@@ -145,11 +121,8 @@ $color_1: black;
 $color_2: gold;
 $color_3: goldenrod;
 
-//:root {
-//	--spine-pyramid: linear-gradient(315deg, transparent 75%, rgba(255, 255, 255, 0.1) 0),
-//}
-
 .bookshelf {
+  /* Adding --spine styling here to make it available in this scope/component */
   --spine-pyramid: linear-gradient(315deg, transparent 75%, rgba(255,255,255,0.1) 0),
   linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 0),
   linear-gradient(135deg, rgba(255,255,255,0.2) 166px, transparent 0),
@@ -212,9 +185,7 @@ $color_3: goldenrod;
 	position: relative;
 	width: 50px;
 	height: 280px;
-
-	//background-image: var(--thisone); // TODO Replace with book image colours from cover
-	transform: rotateY(0deg) translateZ(0px);
+  transform: rotateY(0deg) translateZ(0px);
 }
 
 .spine-title {
@@ -254,92 +225,4 @@ $color_3: goldenrod;
 	transform: rotateY(90deg) translateZ(0);
 	transition: transform 1s;
 }
-
-/* corrected single :root with properly terminated custom properties */
-:root {
-
-}
-
-
-//.bookshelf {
-//  width: 100%;
-//  margin-top: 32px;
-//  display: flex;
-//  flex-wrap: wrap;
-//}
-//
-//.book {
-//  width: 50px;
-//  height: 280px;
-//  position: relative;
-//  margin-left: 1px;
-//  transform-style: preserve-3d;
-//  transform: translateZ(0) rotateY(0);
-//  transition: transform 1s;
-//}
-//
-//.side {
-//  position: absolute;
-//  border: 2px solid black;
-//  border-radius: 3px;
-//  font-weight: bold;
-//  color: black;
-//  text-align: center;
-//  transform-origin: center left;
-//}
-//
-//.spine {
-//  position: relative;
-//  width: 50px;
-//  height: 280px;
-//  /* Patterns from: https://projects.verou.me/css3patterns/ */
-//  background-image: var(--tartan);
-//  transform: rotateY(0deg) translateZ(0px);
-//}
-//
-//.spine-title {
-//  margin: 2px;
-//  position: absolute;
-//  top: 0px;
-//  left: 0px;
-//  font-size: 12px;
-//  color: gold;
-//  writing-mode: vertical-rl;
-//  text-orientation: mixed;
-//}
-//
-//.spine-author {
-//  position: absolute;
-//  color: goldenrod;
-//  bottom: 0px;
-//  left: 20%; /* no idea why 20% centers it */
-//}
-//
-//.top {
-//  width: 50px;
-//  height: 190px;
-//  top: -2px;  /* hmm, why -2 and not 0? */
-//  background-image: linear-gradient(90deg, white 90%, gray 10%);
-//  background-size: 5px 5px;
-//  transform: rotateX(90deg) translateZ(95px) translateY(-95px);
-//}
-//
-//.cover {
-//  width: 190px;
-//  height: 280px;
-//  top: 0px;
-//  background-image: url("https://picsum.photos/190/280");
-//  background-size: contain;
-//  background-repeat: round;
-//  left: 50px;
-//  transform: rotateY(90deg) translateZ(0);
-//  transition: transform 1s;
-//}
-//
-//.book:hover {
-//  z-index: 1;
-//  transform: rotateX(-25deg) rotateY(-40deg) rotateZ(-15deg) translateY(50px)
-//  translateX(-30px);
-//}
-
 </style>

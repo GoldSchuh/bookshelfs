@@ -5,10 +5,11 @@
   </NcAppNavigation>
 </template>
 
-<script>
+<script lang="ts">
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
 import { translate } from '@nextcloud/l10n'
+// @ts-ignore
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
 
@@ -44,7 +45,7 @@ export default {
     },
     translate,
     createBook() {
-      const create = this.$refs.createBook;
+      const create: any = this.$refs.createBook;
       if (!create.title) {
         create.title = 'a';
       }

@@ -8,12 +8,14 @@
   </NcContent>
 </template>
 
-<script>
+<script lang="ts">
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import Bookshelf from './components/Shelf.vue'
+// @ts-ignore
 import Nav from "./components/Nav.vue";
 import NcContent from "@nextcloud/vue/components/NcContent";
 import Sidebar from "./components/Sidebar.vue";
+import type {Book} from "./models/Book.ts";
 
 export default {
 	name: 'App',
@@ -25,16 +27,20 @@ export default {
     Nav,
 	},
   methods: {
-    createBook(book) {
+    createBook(book: Book) {
+      // @ts-ignore
       this.$refs.bookshelf.createBook(book);
     },
-    select(book) {
+    select(book: Book) {
+      // @ts-ignore
       this.$refs.sidebar.select(book);
     },
-    updateBook(book) {
+    updateBook(book: Book) {
+      // @ts-ignore
       this.$refs.bookshelf.updateBook(book);
   },
-    deleteBook(book) {
+    deleteBook(book: Book) {
+      // @ts-ignore
       this.$refs.bookshelf.deleteBook(book);
     }
   }
