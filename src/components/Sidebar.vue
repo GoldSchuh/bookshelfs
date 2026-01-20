@@ -1,5 +1,5 @@
 <template>
-  <NcAppSidebar v-if="open" name="bookshelfs-sidebar" @close="onClose">
+  <NcAppSidebar v-if="open" name="" @close="onClose">
       <div v-if="selected!==null">
         <Form ref="updateBook"/>
         <NcButton
@@ -109,7 +109,7 @@ export default {
         this.$emit('deleteBook', this.selected);
         this.selected = null as unknown as Book;
       }).catch((error) => {
-        showError(translate('bookshelfs', 'Error updating book'))
+        showError(translate('bookshelfs', 'Error deleting book'))
         console.error(error)
       })
     }

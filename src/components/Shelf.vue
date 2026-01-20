@@ -24,6 +24,7 @@ import {showError} from "@nextcloud/dialogs";
 import {translate} from "@nextcloud/l10n";
 import {type Book, constructBook} from "../models/Book.ts";
 import { generateUrl } from '@nextcloud/router'
+import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
 
 export default {
   name: 'Bookshelf',
@@ -111,6 +112,32 @@ export default {
     openInNewTab(book: Book) {
       const url = generateUrl(`/f/${book.file}`)
       window.open(url, '_blank')?.focus();
+    },
+    reStyle() {
+      const oldBooks = this.books
+      this.reset()
+      console.log(oldBooks)
+      oldBooks.forEach((book: Book) => {
+        book.colour = randomColor();
+        book.pattern = randomPattern();
+        book.height = getRandomHeight();
+        this.createBook(book)
+      })
+    },
+    reset() {
+      this.books.forEach((book: Book) => {
+        const options = {
+          id: book.id
+        }
+        const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + book.id)
+        // @ts-ignore
+        axios.delete(api, options).then(() => {
+        }).catch((error) => {
+          showError(translate('bookshelfs', 'Error deleting book'))
+          console.error(error)
+        })
+      })
+      this.books = []
     }
   }
 }
@@ -161,6 +188,7 @@ $color_3: goldenrod;
 	height: 280px;
 	position: relative;
 	margin-left: 1px;
+  margin-bottom: 5px;
 	transform-style: preserve-3d;
 	transform: translateZ(0) rotateY(0);
 	transition: transform 1s;

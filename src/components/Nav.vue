@@ -2,6 +2,14 @@
   <NcAppNavigation>
     <Form ref="createBook"/>
     <NcAppNavigationNew :text="translate('bookshelfs', 'Create book')" @click="createBook"/>
+<!--    <NcAppNavigationItem :undo="true" name="Deleted important entry" @undo="" />-->
+
+    <template #footer>
+      <NcAppNavigationSettings>
+        <NcAppNavigationNew :text="translate('bookshelfs', 'Restyle Shelf')" @click="reStyle"/>
+        <NcAppNavigationNew :text="translate('bookshelfs', 'Reset Shelf')" @click="reset"/>
+      </NcAppNavigationSettings>
+    </template>
   </NcAppNavigation>
 </template>
 
@@ -12,6 +20,10 @@ import { translate } from '@nextcloud/l10n'
 // @ts-ignore
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
+import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
+import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
+import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSettings'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 
 export default {
   name: 'Nav',
@@ -20,29 +32,12 @@ export default {
     Form,
     NcAppNavigation,
     NcAppNavigationNew,
+    NcAppNavigationSpacer,
+    NcAppNavigationSettings,
+    NcAppNavigationItem,
   },
 
   methods: {
-    getRandomHeight(min = 220, max = 290) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    randomPattern() {
-      return this.getRandomHeight(0, 3);
-    },
-    randomColor() {
-      const availableColors = [
-        "maroon",
-        "darkgreen",
-        "darkolivegreen",
-        "brown",
-        "saddlebrown",
-        "sienna",
-        "midnightblue",
-      ];
-      return availableColors[Math.floor(Math.random() * availableColors.length)];
-    },
     translate,
     createBook() {
       const create: any = this.$refs.createBook;
@@ -59,13 +54,13 @@ export default {
         create.file = -1;
       }
       if (!create.colour) {
-        create.colour = this.randomColor();
+        create.colour = randomColor();
       }
       if (!create.pattern) {
-        create.pattern = this.randomPattern();
+        create.pattern = randomPattern();
       }
       if (!create.height) {
-        create.height = this.getRandomHeight();
+        create.height = getRandomHeight();
       }
       this.$emit('createBook', constructBook({ title: create.title,
         author: create.author,
@@ -84,6 +79,12 @@ export default {
       create.pattern = ''
       create.height = ''
     },
+    reStyle() {
+      this.$emit('reStyle');
+    },
+    reset() {
+      this.$emit('reset');
+    }
   }
 }
 </script>

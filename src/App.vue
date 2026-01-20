@@ -1,6 +1,6 @@
 <template>
   <NcContent app-name="bookshelfs">
-    <Nav @createBook="createBook"/>
+    <Nav @createBook="createBook" @reset="reset" @reStyle="reStyle"/>
     <NcAppContent>
         <Bookshelf ref="bookshelf" @select="select"/>
     </NcAppContent>
@@ -38,11 +38,19 @@ export default {
     updateBook(book: Book) {
       // @ts-ignore
       this.$refs.bookshelf.updateBook(book);
-  },
+    },
     deleteBook(book: Book) {
       // @ts-ignore
       this.$refs.bookshelf.deleteBook(book);
-    }
+    },
+    reStyle() {
+      // @ts-ignore
+      this.$refs.bookshelf.reStyle();
+    },
+    reset() {
+      // @ts-ignore
+      this.$refs.bookshelf.reset();
+    },
   }
 }
 </script>
