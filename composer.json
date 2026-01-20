@@ -1,6 +1,6 @@
 {
 	"name": "nextcloud/bookshelfs",
-	"description": "<![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading, show off!]]>",
+	"description": "<![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files, all in Nextcloud. Show off!]]>",
 	"license": "AGPL-3.0-or-later",
 	"authors": [
 		{
