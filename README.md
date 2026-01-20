@@ -13,7 +13,7 @@ Your virtual bookshelf. In this app you can easily add e-books and arrange them 
 
 ## State of maintenance
 
-This project is in a very early state of development. Expect bugs, potential data-loss and crashes
+This project is in a very early state of development. Expect bugs, potential data-loss and crashes.
 
 I don't have too much time to maintain this app, you are welcome to submit pull requests or fork it!
 Donations would help me give more time to this project.
