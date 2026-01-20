@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>bookshelfs</id>
 	<name>Bookshelfs</name>
-	<summary>Order your books in a virtual shelf!</summary>
-	<description><![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading, show off!]]></description>
+	<summary>Your virtual bookshelf</summary>
+	<description><![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files, all in Nextcloud. Show off!]]></description>
 	<version>0.1.1</version>
 	<licence>agpl</licence>
 	<author mail="kars@octubre.be" homepage="https://me.octubre.be">Kars van Velzen</author>
@@ -25,4 +25,8 @@
 			<type>link</type>
 		</navigation>
 	</navigations>
+<!--https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/monetizing.html-->
+<!--	<donation title="Donate to the developers with PayPal" type="paypal">https://paypal.com/example</donation>-->
+<!--	<donation type="stripe">https://stripe.com/example</donation>-->
+<!--	<donation>https://other.service.com/example</donation>-->
 </info>

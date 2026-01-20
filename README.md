@@ -1,24 +1,26 @@
+<div align="center">
+
+<img src="img/app.svg#gh-dark-mode-only" alt="Bookshelfs icon" width="100"/>
+<img src="img/app-dark.svg#gh-light-mode-only" alt="Bookshelfs icon" width="100"/>
+
 # Bookshelfs
 
-The name is an explicit typo - bookshelfs or bookshelves, that's the question.
+</div>
 
-Quick play:
-```bash
-docker run --rm -p 8080:80 -v ./:/var/www/html/apps-extra/bookshelfs ghcr.io/juliusknorr/nextcloud-dev-php82:latest
-```
+![image](docs/demo.gif)
 
-
+Your virtual bookshelf. In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files, all in Nextcloud. Show off!
 
 ## State of maintenance
 
-I don't have too much free time to maintain this app, you are welcome to fork it!
+This project is in a very early state of development. Expect bugs, potential data-loss and crashes
+
+I don't have too much time to maintain this app, you are welcome to submit pull requests or fork it!
+Donations would help me give more time to this project.
 
 ## Idea
 
-I'd like to have a way to organize my bookshelf inside my Nextcloud, where most of my files live.
+I'd like to have a visual way to organize my bookshelf inside my Nextcloud, where most of my files live.
+I developed this app to fill that need (and as a relaxing hobby during the ['blok'](https://www.uantwerpen.be/nl/studeren/studiebegeleiding-ondersteuning/studiecoaching/10-examentips/)).
 
-## Credits
-
-512.png from https://github.com/SilverHoodCorp/polar-bookshelf/blob/master/build/icons/512.png
-app-logo from https://www.svgrepo.com/svg/65710/bookshelf?edit=true
-Default JS & CSS by https://github.com/petargyurov/virtual-bookshelf?tab=Unlicense-1-ov-file
+I hope you find it enjoyable too!
