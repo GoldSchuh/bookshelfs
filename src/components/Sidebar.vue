@@ -3,8 +3,6 @@
       <div v-if="selected!==null">
         <Form ref="updateBook"/>
         <NcButton
-            aria-label="Example text"
-
             :text="translate('bookshelfs', 'Update book')" @click="updateBook"
             variant="primary"
         />
@@ -26,19 +24,14 @@ import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconShareVariantOutline from 'vue-material-design-icons/ShareVariantOutline.vue'
 import NcAppSidebarTab from  '@nextcloud/vue/components/NcAppSidebarTab'
 import NcAppSidebar from  '@nextcloud/vue/components/NcAppSidebar'
-// @ts-ignore
 import Form from "./Form.vue";
 import {getPath} from '../utils.ts';
 import NcAppNavigationNew from "@nextcloud/vue/components/NcAppNavigationNew";
 import {NcButton} from "@nextcloud/vue";
 import {translate} from "@nextcloud/l10n";
-import {generateOcsUrl} from "@nextcloud/router";
-import axios from "@nextcloud/axios";
-import {type Book, constructBook} from "../models/Book.ts";
-import {showError} from "@nextcloud/dialogs";
+import {type Book} from "../models/Book.ts";
 
 export default {
-  name: 'Sidebar',
   components: {
     NcAppNavigationNew,
     Form,
@@ -79,39 +72,29 @@ export default {
       })
     },
     updateBook() {
-      const update: any = this.$refs.updateBook;
+      const update: any = this.$refs.updateBook; // FIXME: any type
+      this.selected.title = update.title;
+      this.selected.author = update.author;
+      this.selected.url = update.url;
+      this.selected.file = update.file;
+      this.selected.colour = update.colour;
+      this.selected.pattern = update.pattern;
+      this.selected.height = update.height;
       const options = {
-        id: this?.selected.id,
-        title: update.title,
-        author: update.author,
-        url: update.url,
-        file: update.file,
-        colour: update.colour,
-        pattern: update.pattern,
-        height: update.height,
+        id: this.selected.id,
+        title: this.selected.title,
+        author: this.selected.author,
+        url: this.selected.url,
+        file: this.selected.file,
+        colour: this.selected.colour,
+        pattern: this.selected.pattern,
+        height: this.selected.height,
       }
-      const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + this.selected.id)
-      axios.put(api, options).then(response => {
-        this.selected = constructBook(response.data.ocs.data)
-        this.$emit('updateBook', this.selected);
-      }).catch((error) => {
-        showError(translate('bookshelfs', 'Error updating book'))
-        console.error(error)
-      })
+      this.$emit('updateBook', options);
     },
     deleteBook() {
-      const options = {
-        id: this.selected.id
-      }
-      const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + this.selected.id)
-      // @ts-ignore
-      axios.delete(api, options).then(() => {
-        this.$emit('deleteBook', this.selected);
-        this.selected = null as unknown as Book;
-      }).catch((error) => {
-        showError(translate('bookshelfs', 'Error deleting book'))
-        console.error(error)
-      })
+      this.$emit('deleteBook', this.selected.id);
+      this.selected = null as unknown as Book;
     }
   }
 }

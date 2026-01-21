@@ -1,6 +1,6 @@
 <template>
 	<div class="bookshelf">
-		<Draggable class="bookshelf-inner" v-model="books"  item-key="id" @start="drag=true" @end="onDragEnd()">
+		<Draggable :list="books" class="bookshelf-inner" item-key="id" @start="drag=true" @end="onDragEnd">
       <template #item="{ element : book }">
       <div class="book" @click="select(book)" @dblclick="openInNewTab(book)">
 				<div class="side spine" :style="{height: `${book.height}px`, top: `${280 - book.height}px`, backgroundImage: 'var(--spine-'+`${getPattern(book)}`+')', backgroundColor: `${book.colour}` }">
@@ -17,27 +17,22 @@
 
 <script lang="ts">
 import Draggable from 'vuedraggable'
-import {loadState} from "@nextcloud/initial-state";
-import {generateOcsUrl} from "@nextcloud/router";
-import axios from "@nextcloud/axios";
-import {showError} from "@nextcloud/dialogs";
-import {translate} from "@nextcloud/l10n";
-import {type Book, constructBook} from "../models/Book.ts";
+import {type Book} from "../models/Book.ts";
 import { generateUrl } from '@nextcloud/router'
-import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
+import type {PropType} from "vue";
 
 export default {
-  name: 'Bookshelf',
   components: {
     Draggable,
   },
+  props: {
+    books: {
+      type: Array as PropType<Book[]>,
+      required: true,
+    }
+  },
   data() {
-    let state: any = loadState('bookshelfs', 'bookshelfs-initial-state')
-    const books: Book[] = (state.$books || []).sort((a: Book, b: Book) => a.position - b.position);
     return {
-      books,
-      title: '',
-      author: '',
       drag: false,
     }
   },
@@ -51,44 +46,11 @@ export default {
       ];
       return availablePatterns[book.pattern];
     },
-    createBook(book: Book) {
-      const options = {
-        title: book.title,
-        author: book.author,
-        position: this.books.length,
-        url: book.url,
-        file: book.file,
-        colour: book.colour,
-        pattern: book.pattern,
-        height: book.height,
-      }
-      const api = generateOcsUrl('apps/bookshelfs/api/v1/books')
-      axios.post(api, options).then(response => {
-        this.books.push(constructBook(response.data.ocs.data))
-      }).catch((error) => {
-        showError(translate('bookshelfs', 'Error adding book'))
-        console.error(error)
-      })
-    }, onDragEnd() {
+    onDragEnd(evt: { oldIndex: number; newIndex: number }) {
       this.drag = false
-      this.updateBookOrder()
-    },
-    updateBookOrder() {
-      this.books.forEach((book: Book, index: number) => {
-        book.position = index
-        const url = generateOcsUrl(`apps/bookshelfs/api/v1/books/${book.id}`)
-        const options = {
-          position: book.position,
-        }
-        axios.put(url, options).catch((error) => {
-          showError(translate('bookshelfs', 'Error updating books'))
-          console.error(error)
-        })
-      })
-      this.sort()
-    },
-    sort() {
-      this.books =  this.books.sort((a: Book, b: Book) => a.position - b.position);
+      if (evt.oldIndex != evt.newIndex){
+        this.$emit('updateBookOrder', evt.oldIndex, evt.newIndex)
+      }
     },
     getPath(book: Book) {
       const img_link = `/index.php/core/preview?fileId=${book.url}&x=190&y=280`
@@ -98,46 +60,14 @@ export default {
       this.$emit('select', book)
     },
     deleteBook(book: Book) {
-      const idx = this.books.findIndex((b: Book) => b.id === book.id)
-      if (idx !== -1) {
-        this.books.splice(idx, 1)
-      }
+      this.$emit('deleteBook', book)
     },
     updateBook(book: Book) {
-      const idx = this.books.findIndex((b: Book) => b.id === book.id)
-      if (idx !== -1) {
-        this.books[idx] = book
-      }
+      this.$emit('updateBook', book)
     },
     openInNewTab(book: Book) {
       const url = generateUrl(`/f/${book.file}`)
       window.open(url, '_blank')?.focus();
-    },
-    reStyle() {
-      const oldBooks = this.books
-      this.reset()
-      console.log(oldBooks)
-      oldBooks.forEach((book: Book) => {
-        book.colour = randomColor();
-        book.pattern = randomPattern();
-        book.height = getRandomHeight();
-        this.createBook(book)
-      })
-    },
-    reset() {
-      this.books.forEach((book: Book) => {
-        const options = {
-          id: book.id
-        }
-        const api = generateOcsUrl('apps/bookshelfs/api/v1/books/' + book.id)
-        // @ts-ignore
-        axios.delete(api, options).then(() => {
-        }).catch((error) => {
-          showError(translate('bookshelfs', 'Error deleting book'))
-          console.error(error)
-        })
-      })
-      this.books = []
     }
   }
 }

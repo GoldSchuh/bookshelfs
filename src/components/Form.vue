@@ -63,8 +63,6 @@ import { translate } from '@nextcloud/l10n'
 import {getFilePickerBuilder} from '@nextcloud/dialogs';
 
 export default {
-  name: 'Form',
-
   data() {
     return {
       title: '',

@@ -3,7 +3,6 @@
     <Form ref="createBook"/>
     <NcAppNavigationNew :text="translate('bookshelfs', 'Create book')" @click="createBook"/>
 <!--    <NcAppNavigationItem :undo="true" name="Deleted important entry" @undo="" />-->
-
     <template #footer>
       <NcAppNavigationSettings>
         <NcAppNavigationNew :text="translate('bookshelfs', 'Restyle Shelf')" @click="reStyle"/>
@@ -17,7 +16,6 @@
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
 import { translate } from '@nextcloud/l10n'
-// @ts-ignore
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
 import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
@@ -26,8 +24,6 @@ import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSe
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 
 export default {
-  name: 'Nav',
-
   components: {
     Form,
     NcAppNavigation,
@@ -40,7 +36,7 @@ export default {
   methods: {
     translate,
     createBook() {
-      const create: any = this.$refs.createBook;
+      const create: any = this.$refs.createBook; // FIXME: any type
       if (!create.title) {
         create.title = 'a';
       }
