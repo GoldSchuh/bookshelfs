@@ -35,30 +35,30 @@ class Book extends Entity implements \JsonSerializable {
 	/** @var string */
 	protected $author;
 	/** @var int */
-    protected $position;
-    /** @var string */
-    protected $url;
-    /** @var int */
-    protected $file;
-    /** @var string */
-    protected $colour;
-    /** @var int */
-    protected $pattern;
-    /** @var int */
-    protected $height;
+	protected $position;
+	/** @var string */
+	protected $url;
+	/** @var int */
+	protected $file;
+	/** @var string */
+	protected $colour;
+	/** @var int */
+	protected $pattern;
+	/** @var int */
+	protected $height;
 
 	public function __construct() {
 		$this->addType('userId', 'string');
 		$this->addType('title', 'string');
 		$this->addType('author', 'string');
 		$this->addType('position', 'int');
-        $this->addType('url', 'text');
-        $this->addType('file', 'int');
-        $this->addType('colour', 'text');
-        $this->addType('pattern', 'int');
-        $this->addType('height', 'int');
+		$this->addType('url', 'text');
+		$this->addType('file', 'int');
+		$this->addType('colour', 'text');
+		$this->addType('pattern', 'int');
+		$this->addType('height', 'int');
 
-    }
+	}
 
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
@@ -68,11 +68,11 @@ class Book extends Entity implements \JsonSerializable {
 			'title' => $this->title,
 			'author' => $this->author,
 			'position' => $this->position,
-            'url' => $this->url,
-            'file' => $this->file,
-            'colour' => $this->colour,
-            'pattern' => $this->pattern,
-            'height' => $this->height,
+			'url' => $this->url,
+			'file' => $this->file,
+			'colour' => $this->colour,
+			'pattern' => $this->pattern,
+			'height' => $this->height,
 		];
 	}
 }

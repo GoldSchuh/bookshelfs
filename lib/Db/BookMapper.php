@@ -12,6 +12,9 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 
 use OCP\IDBConnection;
 
+/**
+ * @extends QBMapper<Book>
+ */
 class BookMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'bookshelfs', Book::class);
@@ -20,8 +23,8 @@ class BookMapper extends QBMapper {
 	/**
 	 * @param int $id
 	 * @return Book
-	 * @throws \OCP\AppFramework\Db\DoesNotExistException
-	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException|Exception
 	 */
 	public function getBook(int $id): Book {
 		$qb = $this->db->getQueryBuilder();
@@ -122,7 +125,7 @@ class BookMapper extends QBMapper {
 		}
 		try {
 			$book = $this->getBookOfUser($id, $userId);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return null;
 		}
 		if ($title !== null) {
@@ -161,7 +164,7 @@ class BookMapper extends QBMapper {
 	public function deleteBook(int $id, string $userId): ?Book {
 		try {
 			$book = $this->getBookOfUser($id, $userId);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return null;
 		}
 

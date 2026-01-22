@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\Bookshelfs\Controller;
 
+use Exception;
 use OCA\Bookshelfs\AppInfo\Application;
 use OCA\Bookshelfs\Db\BookMapper;
 use OCP\AppFramework\Controller;
@@ -14,27 +15,24 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
 use OCP\IRequest;
-use OCP\PreConditionNotMetException;
+use Throwable;
 
 class PageController extends Controller {
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IEventDispatcher $eventDispatcher,
-		private IInitialState $initialStateService,
-		private IConfig $config,
-		private BookMapper $bookMapper,
-		private ?string $userId,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly IInitialState $initialStateService,
+		private readonly BookMapper $bookMapper,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
 
 	/**
 	 * @return TemplateResponse
-	 * @throws PreConditionNotMetException
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
@@ -43,7 +41,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 		try {
 			$books = $this->bookMapper->getBooksOfUser($this->userId);
-		} catch (\Exception|\Throwable $e) {
+		} catch (Exception|Throwable) {
 			$books = [];
 		}
 		$state = [

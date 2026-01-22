@@ -6,7 +6,6 @@ namespace OCA\Bookshelfs\Controller;
 
 use Exception;
 use OCA\Bookshelfs\Db\BookMapper;
-use OCA\Bookshelfs\Service\BookService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -24,9 +23,8 @@ class BooksController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private BookMapper $bookMapper,
-		private BookService $bookService,
-		private ?string $userId,
+		private readonly BookMapper $bookMapper,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -70,6 +68,12 @@ class BooksController extends OCSController {
 	 * @param int $id
 	 * @param string|null $title
 	 * @param string|null $author
+	 * @param int|null $position
+	 * @param string|null $url
+	 * @param int|null $file
+	 * @param string|null $colour
+	 * @param int|null $pattern
+	 * @param int|null $height
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
@@ -93,20 +97,6 @@ class BooksController extends OCSController {
 		try {
 			$book = $this->bookMapper->deleteBook($id, $this->userId);
 			return new DataResponse($book);
-		} catch (Exception|Throwable $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-		}
-	}
-
-	/**
-	 * @param int $id
-	 * @return DataResponse
-	 */
-	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/books/{id}/export', requirements: self::REQUIREMENTS)]
-	public function exportUserBook(int $id): DataResponse {
-		try {
-			$path = $this->bookService->exportBook($id, $this->userId);
-			return new DataResponse($path);
 		} catch (Exception|Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
