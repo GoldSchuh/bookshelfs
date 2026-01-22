@@ -21,8 +21,6 @@ class BookMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $id
-	 * @return Book
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException|Exception
 	 */
@@ -39,9 +37,6 @@ class BookMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $id
-	 * @param string $userId
-	 * @return Book
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
@@ -55,14 +50,13 @@ class BookMapper extends QBMapper {
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			)
 			->andWhere(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
 			);
 
 		return $this->findEntity($qb);
 	}
 
 	/**
-	 * @param string $userId
 	 * @return Book[]
 	 * @throws Exception
 	 */
@@ -72,23 +66,13 @@ class BookMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName())
 			->where(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
 			);
 
 		return $this->findEntities($qb);
 	}
 
 	/**
-	 * @param string $userId
-	 * @param string $title
-	 * @param string $author
-	 * @param int $position
-	 * @param string $url
-	 * @param int $file
-	 * @param string $colour
-	 * @param int $pattern
-	 * @param int $height
-	 * @return Book
 	 * @throws Exception
 	 */
 	public function createBook(string $userId, string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): Book {
@@ -106,59 +90,55 @@ class BookMapper extends QBMapper {
 	}
 
 	/**
-	 * @param int $id
-	 * @param string $userId
-	 * @param string|null $title
-	 * @param string|null $author
-	 * @param int|null $position
-	 * @param string|null $url
-	 * @param int|null $file
-	 * @param string|null $colour
-	 * @param int|null $pattern
-	 * @param int|null $height
-	 * @return Book |null
 	 * @throws Exception
 	 */
 	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): ?Book {
 		if ($title === null && $author === null && $position === null && $url === null && $file === null && $colour === null && $pattern === null && $height === null) {
 			return null;
 		}
+
 		try {
 			$book = $this->getBookOfUser($id, $userId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return null;
 		}
+
 		if ($title !== null) {
 			$book->setTitle($title);
 		}
+
 		if ($author !== null) {
 			$book->setAuthor($author);
 		}
+
 		if ($position !== null) {
 			$book->setPosition($position);
 		}
+
 		if ($url !== null) {
 			$book->setUrl($url);
 		}
+
 		if ($file !== null) {
 			$book->setFile($file);
 		}
+
 		if ($colour !== null) {
 			$book->setColour($colour);
 		}
+
 		if ($pattern !== null) {
 			$book->setPattern($pattern);
 		}
+
 		if ($height !== null) {
 			$book->setHeight($height);
 		}
+
 		return $this->update($book);
 	}
 
 	/**
-	 * @param int $id
-	 * @param string $userId
-	 * @return Book|null
 	 * @throws Exception
 	 */
 	public function deleteBook(int $id, string $userId): ?Book {
@@ -172,8 +152,6 @@ class BookMapper extends QBMapper {
 	}
 
 	/**
-	 * @param string $userId
-	 * @return void
 	 * @throws Exception
 	 */
 	public function deleteBooksOfUser(string $userId): void {
@@ -181,7 +159,7 @@ class BookMapper extends QBMapper {
 
 		$qb->delete($this->getTableName())
 			->where(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
 			);
 		$qb->executeStatement();
 		$qb->resetQueryParts();
