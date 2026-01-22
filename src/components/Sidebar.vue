@@ -16,12 +16,6 @@
 </template>
 
 <script lang="ts">
-// @ts-ignore
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
-// @ts-ignore
-import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
-// @ts-ignore
-import IconShareVariantOutline from 'vue-material-design-icons/ShareVariantOutline.vue'
 import NcAppSidebarTab from  '@nextcloud/vue/components/NcAppSidebarTab'
 import NcAppSidebar from  '@nextcloud/vue/components/NcAppSidebar'
 import Form from "./Form.vue";
@@ -35,9 +29,6 @@ export default {
   components: {
     NcAppNavigationNew,
     Form,
-    IconMagnify,
-    IconCogOutline,
-    IconShareVariantOutline,
     NcAppSidebarTab,
     NcAppSidebar,
     NcButton,
@@ -72,7 +63,7 @@ export default {
       })
     },
     updateBook() {
-      const update: any = this.$refs.updateBook; // FIXME: any type
+      const update: any = this.$refs.updateBook;
       this.selected.title = update.title;
       this.selected.author = update.author;
       this.selected.url = update.url;
@@ -80,17 +71,7 @@ export default {
       this.selected.colour = update.colour;
       this.selected.pattern = update.pattern;
       this.selected.height = update.height;
-      const options = {
-        id: this.selected.id,
-        title: this.selected.title,
-        author: this.selected.author,
-        url: this.selected.url,
-        file: this.selected.file,
-        colour: this.selected.colour,
-        pattern: this.selected.pattern,
-        height: this.selected.height,
-      }
-      this.$emit('updateBook', options);
+      this.$emit('updateBook', this.selected);
     },
     deleteBook() {
       this.$emit('deleteBook', this.selected.id);
@@ -107,9 +88,6 @@ $color_3: goldenrod;
 
 .form {
   margin: 20px;
-  //display: flex;
-  //flex-direction: column;
-  //flex-wrap: ;
   gap: 5px;
 }
 
@@ -124,12 +102,9 @@ $color_3: goldenrod;
   margin: 20px;
   width: 190px;
   height: 280px;
-  //top: 0;
   background-size: contain;
   background-repeat: round;
   left: 50px;
-  //transform: rotateY(90deg) translateZ(0);
-  //transition: transform 1s;
 }
 
 </style>

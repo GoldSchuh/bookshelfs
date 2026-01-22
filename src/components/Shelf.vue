@@ -48,8 +48,16 @@ export default {
     },
     onDragEnd(evt: { oldIndex: number; newIndex: number }) {
       this.drag = false
-      if (evt.oldIndex != evt.newIndex){
-        this.$emit('updateBookOrder', evt.oldIndex, evt.newIndex)
+      // Draggable changes the array itself, so we only need to update positions of affected books
+      for (let j = Math.min(evt.oldIndex, evt.newIndex); j <= Math.max(evt.oldIndex, evt.newIndex); j++) {
+        let b = this.books.at(j)
+        if(!b) continue;
+        b.position = this.books.indexOf(b)
+        const options = {
+          id: b.id,
+          position: b.position
+        }
+        this.$emit('updateBook',options, false)
       }
     },
     getPath(book: Book) {
@@ -61,9 +69,6 @@ export default {
     },
     deleteBook(book: Book) {
       this.$emit('deleteBook', book)
-    },
-    updateBook(book: Book) {
-      this.$emit('updateBook', book)
     },
     openInNewTab(book: Book) {
       const url = generateUrl(`/f/${book.file}`)

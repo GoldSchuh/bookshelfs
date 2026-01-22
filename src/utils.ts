@@ -22,6 +22,5 @@ export function randomColor(): string {
         "sienna",
         "midnightblue",
     ];
-    // @ts-ignore
-    return availableColors[Math.floor(Math.random() * availableColors.length)];
+    return availableColors[Math.floor(Math.random() * availableColors.length)] || "darkolivegreen";
 }
