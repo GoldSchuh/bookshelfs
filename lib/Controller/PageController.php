@@ -44,6 +44,7 @@ class PageController extends Controller {
 		} catch (Exception|Throwable) {
 			$books = [];
 		}
+
 		$state = [
 			'$books' => $books,
 		];

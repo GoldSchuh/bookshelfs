@@ -15,11 +15,6 @@ use OCP\IRequest;
 use Throwable;
 
 class BooksController extends OCSController {
-
-	public const REQUIREMENTS = [
-		'apiVersion' => 'v1',
-	];
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -32,8 +27,19 @@ class BooksController extends OCSController {
 	/**
 	 * @return DataResponse
 	 */
+	// TODO change like this
+	/**
+	 * Get all books for the current user
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array<Book>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 *
+	 * 200: Books returned successfully
+	 * 400: Bad request
+	 */
 	#[NoAdminRequired]
-	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/books', requirements: self::REQUIREMENTS)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/books', requirements: [
+		'apiVersion' => 'v1',
+	])]
 	public function getUserBooks(): DataResponse {
 		try {
 			return new DataResponse($this->bookMapper->getBooksOfUser($this->userId));
@@ -54,7 +60,9 @@ class BooksController extends OCSController {
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/books', requirements: self::REQUIREMENTS)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/books', requirements: [
+		'apiVersion' => 'v1',
+	])]
 	public function addUserBook(string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): DataResponse {
 		try {
 			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
@@ -77,7 +85,9 @@ class BooksController extends OCSController {
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/books/{id}', requirements: self::REQUIREMENTS)]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/books/{id}', requirements: [
+		'apiVersion' => 'v1',
+	])]
 	public function editUserBook(int $id, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): DataResponse {
 		try {
 			$book = $this->bookMapper->updateBook($id, $this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
@@ -92,7 +102,9 @@ class BooksController extends OCSController {
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/books/{id}', requirements: self::REQUIREMENTS)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/books/{id}', requirements: [
+		'apiVersion' => 'v1',
+	])]
 	public function deleteUserBook(int $id): DataResponse {
 		try {
 			$book = $this->bookMapper->deleteBook($id, $this->userId);

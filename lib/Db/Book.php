@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace OCA\Bookshelfs\Db;
 
+use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
+use ReturnTypeWillChange;
 
 /**
  * @method string|null getUserId()
@@ -26,26 +28,25 @@ use OCP\AppFramework\Db\Entity;
  * @method string getHeight()
  * @method void setHeight(int $height)
  */
-class Book extends Entity implements \JsonSerializable {
+class Book extends Entity implements JsonSerializable {
 
-	/** @var string */
-	protected $userId;
-	/** @var string */
-	protected $title;
-	/** @var string */
-	protected $author;
-	/** @var int */
-	protected $position;
-	/** @var string */
-	protected $url;
-	/** @var int */
-	protected $file;
-	/** @var string */
-	protected $colour;
-	/** @var int */
-	protected $pattern;
-	/** @var int */
-	protected $height;
+	protected string $userId;
+
+	protected string $title;
+
+	protected string $author;
+
+	protected int $position;
+
+	protected string $url;
+
+	protected int $file;
+
+	protected string $colour;
+
+	protected int $pattern;
+
+	protected int $height;
 
 	public function __construct() {
 		$this->addType('userId', 'string');
@@ -60,8 +61,8 @@ class Book extends Entity implements \JsonSerializable {
 
 	}
 
-	#[\ReturnTypeWillChange]
-	public function jsonSerialize() {
+	#[ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'id' => $this->id,
 			'user_id' => $this->userId,
