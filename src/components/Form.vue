@@ -1,5 +1,4 @@
 <template>
-    <!-- Form to add a new book -->
     <div class="create-book-form">
       <input
           v-model="title"
@@ -84,10 +83,7 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              // @ts-ignore
-              this.url = selectedPaths[0]?._data.id || '';
-              this.url = this.url.toString()
-              console.log(this.url)
+              this.url = (selectedPaths?.[0] as any)?._data?.id.toString() || '';
             }
           })
           .build().pick();
@@ -98,8 +94,7 @@ export default {
             label: 'Choose',
             variant: 'primary',
             callback: (selectedPaths) => {
-              // @ts-ignore
-              this.file = selectedPaths[0]?._data.id || -1;
+              this.file = (selectedPaths?.[0] as any)?._data.id || -1;
             }
           })
           .build().pick();

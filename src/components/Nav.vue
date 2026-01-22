@@ -2,7 +2,6 @@
   <NcAppNavigation>
     <Form ref="createBook"/>
     <NcAppNavigationNew :text="translate('bookshelfs', 'Create book')" @click="createBook"/>
-<!--    <NcAppNavigationItem :undo="true" name="Deleted important entry" @undo="" />-->
     <template #footer>
       <NcAppNavigationSettings>
         <NcAppNavigationNew :text="translate('bookshelfs', 'Restyle Shelf')" @click="reStyle"/>
@@ -36,7 +35,7 @@ export default {
   methods: {
     translate,
     createBook() {
-      const create: any = this.$refs.createBook; // FIXME: any type
+      const create: any = this.$refs.createBook;
       if (!create.title) {
         create.title = 'a';
       }
