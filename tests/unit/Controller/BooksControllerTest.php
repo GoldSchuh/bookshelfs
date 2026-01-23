@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 final class BooksControllerTest extends TestCase {
 	public function testDummy() {
 		$app = new Application();
-		$this->assertEquals('notebook', $app::APP_ID);
+		$this->assertEquals('bookshelfs', $app::APP_ID);
 	}
 }
 
