@@ -44,9 +44,9 @@ class Book extends Entity implements JsonSerializable {
 		$this->addType('title', 'string');
 		$this->addType('author', 'string');
 		$this->addType('position', 'int');
-		$this->addType('url', 'text');
+		$this->addType('url', 'string');
 		$this->addType('file', 'int');
-		$this->addType('colour', 'text');
+		$this->addType('colour', 'string');
 		$this->addType('pattern', 'int');
 		$this->addType('height', 'int');
 	}
