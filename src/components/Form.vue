@@ -58,6 +58,7 @@
 </template>
 
 <script lang="ts">
+
 import { translate } from '@nextcloud/l10n'
 import {getFilePickerBuilder} from '@nextcloud/dialogs';
 

@@ -16,20 +16,16 @@
 </template>
 
 <script lang="ts">
-import NcAppSidebarTab from  '@nextcloud/vue/components/NcAppSidebarTab'
 import NcAppSidebar from  '@nextcloud/vue/components/NcAppSidebar'
 import Form from "./Form.vue";
 import {getPath} from '../utils.ts';
-import NcAppNavigationNew from "@nextcloud/vue/components/NcAppNavigationNew";
-import {NcButton} from "@nextcloud/vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
 import {translate} from "@nextcloud/l10n";
 import {type Book} from "../models/Book.ts";
 
 export default {
   components: {
-    NcAppNavigationNew,
     Form,
-    NcAppSidebarTab,
     NcAppSidebar,
     NcButton,
   },

@@ -12,24 +12,21 @@
 </template>
 
 <script lang="ts">
+
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
 import { translate } from '@nextcloud/l10n'
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
 import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
-import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
 import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSettings'
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 
 export default {
   components: {
     Form,
     NcAppNavigation,
     NcAppNavigationNew,
-    NcAppNavigationSpacer,
     NcAppNavigationSettings,
-    NcAppNavigationItem,
   },
 
   methods: {

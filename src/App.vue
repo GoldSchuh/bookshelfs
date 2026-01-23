@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts">
+
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import Nav from "./components/Nav.vue";
 import NcContent from "@nextcloud/vue/components/NcContent";

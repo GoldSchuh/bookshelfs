@@ -2,66 +2,49 @@ import { createAppConfig } from '@nextcloud/vite-config'
 import { defineConfig } from 'vite'
 import stylelint from "vite-plugin-stylelint";
 
-const isProduction = process.env.NODE_ENV === "production";
-
 export default defineConfig(
-    createAppConfig(
-        {
+    createAppConfig({
       main: 'src/main.ts',
-    },
-        {
-            config: {
-                build: {}, css: {
-                    modules: {
-                        localsConvention: "camelCase",
+    }, {
+        config: {
+            build: {
+                sourcemap: false,
+                cssCodeSplit: true,
+                cssMinify: true,
+                minify: 'terser',
+                terserOptions: {
+                    format: {comments: false},
+                    compress: {
+                        drop_console: true,
+                        drop_debugger: true,
                     },
                 },
-                plugins: [stylelint()],
+            rollupOptions: {
+                    output: {
+                        manualChunks(id: string) {
+                            if (id.includes('node_modules')) {
+                                // put Vue runtime into its own chunk
+                                if (id.includes('/node_modules/vue')) return 'vendor-vue'
+                                // separate draggable/sortable libs
+                                if (id.includes('/node_modules/vuedraggable') || id.includes('/node_modules/sortablejs')) return 'vendor-draggable'
+                                // nextcloud/router or other large vendor libs separately
+                                if (id.includes('/node_modules/@nextcloud')) return 'vendor-nextcloud'
+                                // everything else vendor
+                                // console.log(id)
+                                return 'vendor'
+                            }
+                        }
+                    }
+                }
             },
-            inlineCSS: {relativeCSSInjection: true},
-            minify: isProduction,
-            createEmptyCSSEntryPoints: true,
-            // HMR not working :(
-            // server: {
-            //   watch: {
-            //     ignored: [
-            //       "**/vendor/**",
-            //       "**/vendor-bin/**",
-            //     ]
-            //   },
-            //   host: true, // listen on all interfaces
-            //   port: 5173,
-            //   strictPort: true,
-            //   // cors: true,
-            //   // changeOrigin: true,
-            //   // secure: false,
-            //   hmr: {
-            //     protocol: 'ws',
-            //     host: 'localhost', // plain hostname (or 'localhost')
-            //     port: 5173,
-            //   },
-            //   proxy: {
-            //     '/apps': {
-            //       target: 'http://nextcloud.local',
-            //       changeOrigin: true,
-            //       secure: false,
-            //     },
-            //     '/core': {
-            //       target: 'http://nextcloud.local',
-            //       changeOrigin: true,
-            //       secure: false,
-            //     },
-            //     '/index.php': {
-            //       target: 'http://nextcloud.local',
-            //       changeOrigin: true,
-            //       secure: false,
-            //     },
-            //     '/status.php': {
-            //       target: 'http://nextcloud.local',
-            //       changeOrigin: true,
-            //       secure: false,
-            //     },
-            //   },
-            // }
-        })
+            css: {
+                modules: {
+                    localsConvention: "camelCase",
+                },
+            },
+            plugins: [stylelint()],
+        },
+        inlineCSS: {relativeCSSInjection: true},
+        minify: true,
+    })
 )
