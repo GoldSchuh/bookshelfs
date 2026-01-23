@@ -4,101 +4,85 @@ declare(strict_types=1);
 
 namespace unit\Controller;
 
+use OC;
 use OCA\Bookshelfs\AppInfo\Application;
+use OCA\Bookshelfs\Db\BookMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\TestCase;
 
 final class BooksControllerTest extends TestCase {
+	private BookMapper $bookMapper;
+	private array $testBookValues = [
+		['user_id' => 'user1', 'id' => 0, 'title' => 'Batman Philosophy' , 'author' => 'Bruce', 'position' => 0 , 'url' => '9', 'file' => 9, 'colour' => 'green' , 'pattern' => 1, 'height' => 250],
+	];
+
+	public function setUp(): void {
+		parent::setUp();
+		OC::$server->getAppManager()->enableApp('bookshelfs');
+		$this->bookMapper = OC::$server->get(BookMapper::class);
+	}
+	public function tearDown(): void {
+		$this->cleanupUser('user1');
+	}
+	private function cleanupUser(string $userId): void {
+		/** @var IUserManager $userManager */
+		$userManager = OC::$server->get(IUserManager::class);
+		if ($userManager->userExists($userId)) {
+			$this->bookMapper->deleteBooksOfUser($userId);
+			$user = $userManager->get($userId);
+			$user->delete();
+		}
+	}
 	public function testDummy() {
 		$app = new Application();
 		$this->assertEquals('bookshelfs', $app::APP_ID);
 	}
+
+	public function testCreateBook() {
+		foreach ($this->testBookValues as $book) {
+			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
+			self::assertEquals($book['user_id'], $addedBook->getUserId());
+			self::assertEquals($book['title'], $addedBook->getTitle());
+			self::assertEquals($book['author'], $addedBook->getAuthor());
+			self::assertEquals($book['position'], $addedBook->getPosition());
+			self::assertEquals($book['url'], $addedBook->getUrl());
+			self::assertEquals($book['file'], $addedBook->getFile());
+			self::assertEquals($book['colour'], $addedBook->getColour());
+			self::assertEquals($book['pattern'], $addedBook->getPattern());
+			self::assertEquals($book['height'], $addedBook->getHeight());
+		}
+	}
+
+	public function testDeleteBook() {
+		foreach ($this->testBookValues as $book) {
+			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
+			$addedBookId = $addedBook->getId();
+			$dbBook = $this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
+			$deletedBook = $this->bookMapper->deleteBook($addedBookId, $book['user_id']);
+			$this->assertNotNull($deletedBook, 'error deleting book');
+			$exceptionThrowed = false;
+			try {
+				$dbBook = $this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
+			} catch (DoesNotExistException $e) {
+				$exceptionThrowed = true;
+			}
+			$this->assertTrue($exceptionThrowed, 'deleted book still exists');
+		}
+	}
+
+	public function testUpdateBook() {
+		foreach ($this->testBookValues as $book) {
+			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
+			$addedBookId = $addedBook->getId();
+
+			$editedBook = $this->bookMapper->updateBook($addedBookId, $book['user_id'], $book['title'] . 'AAA', $book['author'] . 'BBB');
+			$this->assertNotNull($editedBook, 'error deleting book');
+			self::assertEquals($book['title'] . 'AAA', $editedBook->getTitle());
+			self::assertEquals($book['author'] . 'BBB', $editedBook->getAuthor());
+
+			$dbBook = $this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
+			self::assertEquals($book['title'] . 'AAA', $dbBook->getTitle());
+			self::assertEquals($book['author'] . 'BBB', $dbBook->getAuthor());
+		}
+	}
 }
-
-//use OCA\NoteBook\Db\NoteMapper;
-//use OCP\AppFramework\Db\DoesNotExistException;
-//use OCP\IUserManager;
-
-///**
-// * @group DB
-// */
-//class NoteMapperTest extends \Test\TestCase
-//{
-//
-//    private NoteMapper $noteMapper;
-//    private array $testNoteValues = [
-//        ['user_id' => 'user1', 'name' => 'supername', 'content' => 'supercontent'],
-//        ['user_id' => 'user1', 'name' => '', 'content' => 'supercontent'],
-//        ['user_id' => 'user1', 'name' => 'supername', 'content' => ''],
-//        ['user_id' => 'user1', 'name' => '', 'content' => ''],
-//    ];
-//
-//    public function setUp(): void
-//    {
-//        parent::setUp();
-//
-//        \OC::$server->getAppManager()->enableApp('notebook');
-//
-//        $this->noteMapper = \OC::$server->get(NoteMapper::class);
-//    }
-//
-//    public function tearDown(): void
-//    {
-//        $this->cleanupUser('user1');
-//    }
-//
-//    private function cleanupUser(string $userId): void
-//    {
-//        /** @var IUserManager $userManager */
-//        $userManager = \OC::$server->get(IUserManager::class);
-//        if ($userManager->userExists($userId)) {
-//            $this->noteMapper->deleteNotesOfUser($userId);
-//            $user = $userManager->get($userId);
-//            $user->delete();
-//        }
-//    }
-//
-//    public function testAddNote()
-//    {
-//        foreach ($this->testNoteValues as $note) {
-//            $addedNote = $this->noteMapper->createNote('user1', $note['name'], $note['content']);
-//            self::assertEquals($note['name'], $addedNote->getName());
-//            self::assertEquals($note['content'], $addedNote->getContent());
-//            self::assertEquals($note['user_id'], $addedNote->getUserId());
-//        }
-//    }
-//
-//    public function testDeleteNote()
-//    {
-//        foreach ($this->testNoteValues as $note) {
-//            $addedNote = $this->noteMapper->createNote($note['user_id'], $note['name'], $note['content']);
-//            $addedNoteId = $addedNote->getId();
-//            $dbNote = $this->noteMapper->getNoteOfUser($addedNoteId, $note['user_id']);
-//            $deletedNote = $this->noteMapper->deleteNote($addedNoteId, $note['user_id']);
-//            $this->assertNotNull($deletedNote, 'error deleting note');
-//            $exceptionThrowed = false;
-//            try {
-//                $dbNote = $this->noteMapper->getNoteOfUser($addedNoteId, $note['user_id']);
-//            } catch (DoesNotExistException $e) {
-//                $exceptionThrowed = true;
-//            }
-//            $this->assertTrue($exceptionThrowed, 'deleted note still exists');
-//        }
-//    }
-//
-//    public function testEditNote()
-//    {
-//        foreach ($this->testNoteValues as $note) {
-//            $addedNote = $this->noteMapper->createNote($note['user_id'], $note['name'], $note['content']);
-//            $addedNoteId = $addedNote->getId();
-//
-//            $editedNote = $this->noteMapper->updateNote($addedNoteId, $note['user_id'], $note['name'] . 'AAA', $note['content'] . 'BBB');
-//            $this->assertNotNull($editedNote, 'error deleting note');
-//            self::assertEquals($note['name'] . 'AAA', $editedNote->getName());
-//            self::assertEquals($note['content'] . 'BBB', $editedNote->getContent());
-//
-//            $dbNote = $this->noteMapper->getNoteOfUser($addedNoteId, $note['user_id']);
-//            self::assertEquals($note['name'] . 'AAA', $dbNote->getName());
-//            self::assertEquals($note['content'] . 'BBB', $dbNote->getContent());
-//        }
-//    }
-//}
