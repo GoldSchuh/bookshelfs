@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class BooksControllerTest extends TestCase {
 	private BookMapper $bookMapper;
 	private array $testBookValues = [
-		['user_id' => 'user1', 'id' => 0, 'title' => 'Batman Philosophy' , 'author' => 'Bruce', 'position' => 0 , 'url' => '9', 'file' => 9, 'colour' => 'green' , 'pattern' => 1, 'height' => 250],
+		['user_id' => 'user1', 'id' => 0, 'title' => 'Batman Philosophy' , 'author' => 'B', 'position' => 50 , 'url' => '9', 'file' => 9, 'colour' => 'green' , 'pattern' => 1, 'height' => 250],
 	];
 
 	public function setUp(): void {
