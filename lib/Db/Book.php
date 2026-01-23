@@ -29,24 +29,15 @@ use ReturnTypeWillChange;
  * @method void setHeight(int $height)
  */
 class Book extends Entity implements JsonSerializable {
-
-	protected string $userId;
-
-	protected string $title;
-
-	protected string $author;
-
-	protected int $position;
-
-	protected string $url;
-
-	protected int $file;
-
-	protected string $colour;
-
-	protected int $pattern;
-
-	protected int $height;
+    protected ?string $userId = '';
+    protected string $title = '';
+    protected string $author = '';
+    protected int $position = 0;
+    protected string $url = '';
+    protected int $file = 0;
+    protected string $colour = '';
+    protected int $pattern = 0;
+    protected int $height = 0;
 
 	public function __construct() {
 		$this->addType('userId', 'string');
