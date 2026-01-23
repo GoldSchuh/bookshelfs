@@ -104,7 +104,7 @@ $color_3: goldenrod;
   height: 280px;
   background-size: contain;
   background-repeat: round;
-  left: 50px;
+  inset-inline-start: 50px;
 }
 
 </style>

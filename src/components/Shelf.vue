@@ -105,7 +105,6 @@ $color_3: goldenrod;
   repeating-linear-gradient(270deg, transparent, transparent 50px, rgba(0,0,0,0.4) 50px),
   repeating-linear-gradient(125deg, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 3px);
   --spine-tartan-size: 232px 232px;
-
 	width: 100%;
 	margin: 50px;
 	display: flex;
@@ -122,7 +121,7 @@ $color_3: goldenrod;
 	width: 50px;
 	height: 280px;
 	position: relative;
-	margin-left: 1px;
+  margin-inline-start: 1px;
   margin-bottom: 5px;
 	transform-style: preserve-3d;
 	transform: translateZ(0) rotateY(0);
@@ -155,7 +154,7 @@ $color_3: goldenrod;
 	margin: 2px;
 	position: absolute;
 	top: 0;
-	left: 0;
+  inset-inline-start: 0;
 	font-size: 12px;
 	color: $color_2;
 	writing-mode: vertical-rl;
@@ -166,7 +165,7 @@ $color_3: goldenrod;
 	position: absolute;
 	color: $color_3;
 	bottom: 0;
-	left: 20%;
+  inset-inline-start: 20%;
 }
 
 .top {
@@ -184,7 +183,7 @@ $color_3: goldenrod;
 	top: 0;
 	background-size: contain;
 	background-repeat: round;
-	left: 50px;
+  inset-inline-start: 50px;
 	transform: rotateY(90deg) translateZ(0);
 	transition: transform 1s;
 }
