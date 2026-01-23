@@ -9,7 +9,7 @@ use OCP\AppFramework\Db\Entity;
 use ReturnTypeWillChange;
 
 /**
- * @method string|null getUserId()
+ * @method string getUserId()
  * @method void setUserId(?string $userId)
  * @method string getTitle()
  * @method void setTitle(string $title)
@@ -58,7 +58,6 @@ class Book extends Entity implements JsonSerializable {
 		$this->addType('colour', 'text');
 		$this->addType('pattern', 'int');
 		$this->addType('height', 'int');
-
 	}
 
 	#[ReturnTypeWillChange]

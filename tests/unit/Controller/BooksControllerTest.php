@@ -7,6 +7,8 @@ namespace OCA\Bookshelfs\Tests;
 use OCA\Bookshelfs\AppInfo\Application;
 use OCA\Bookshelfs\Db\BookMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\DB\Exception;
 use OCP\IUserManager;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +29,10 @@ class BooksControllerTest extends TestCase {
 	public function tearDown(): void {
 		$this->cleanupUser('user1');
 	}
+
+	/**
+	 * @throws Exception
+	 */
 	private function cleanupUser(string $userId): void {
 		/** @var IUserManager $userManager */
 		$userManager = \OC::$server->get(IUserManager::class);
@@ -41,9 +47,12 @@ class BooksControllerTest extends TestCase {
 		$this->assertEquals('bookshelfs', $app::APP_ID);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testCreateBook() {
 		foreach ($this->testBookValues as $book) {
-			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
+			$addedBook = $this->bookMapper->createBook(userId: $book['user_id'], title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
 			self::assertEquals($book['user_id'], $addedBook->getUserId());
 			self::assertEquals($book['title'], $addedBook->getTitle());
 			self::assertEquals($book['author'], $addedBook->getAuthor());
@@ -56,6 +65,11 @@ class BooksControllerTest extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
+	 * @throws Exception
+	 */
 	public function testDeleteBook() {
 		foreach ($this->testBookValues as $book) {
 			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
@@ -73,6 +87,11 @@ class BooksControllerTest extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
+	 * @throws Exception
+	 */
 	public function testUpdateBook() {
 		foreach ($this->testBookValues as $book) {
 			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
