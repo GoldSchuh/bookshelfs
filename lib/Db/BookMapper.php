@@ -92,16 +92,8 @@ class BookMapper extends QBMapper {
 	/**
 	 * @throws Exception
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): ?Book {
-		if ($title === null && $author === null && $position === null && $url === null && $file === null && $colour === null && $pattern === null && $height === null) {
-			return null;
-		}
-
-		try {
-			$book = $this->getBookOfUser($id, $userId);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
-			return null;
-		}
+	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): Book {
+		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
 
 		if ($title !== null) {
 			$book->setTitle($title);
@@ -141,12 +133,8 @@ class BookMapper extends QBMapper {
 	/**
 	 * @throws Exception
 	 */
-	public function deleteBook(int $id, string $userId): ?Book {
-		try {
-			$book = $this->getBookOfUser($id, $userId);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
-			return null;
-		}
+	public function deleteBook(int $id, string $userId): Book {
+		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
 
 		return $this->delete($book);
 	}

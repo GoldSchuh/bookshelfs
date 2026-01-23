@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\Bookshelfs\Controller;
 
+use OCA\Bookshelfs\Db\Book;
 use OCA\Bookshelfs\Db\BookMapper;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -27,7 +28,7 @@ class BooksController extends OCSController {
 	/**
 	 * Return a list of all books of the current user
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<array{id: int, title: string , author: string, position: int , url: string, file: int, colour: string , pattern: int, height: int}> , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, list<string>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, Book[] , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, string[] , array{}>
 	 *
 	 * @response 200: All user books returned successfully
 	 * @response 400: Bad request
@@ -57,7 +58,7 @@ class BooksController extends OCSController {
 	 * @param int $pattern Pattern of the book
 	 * @param int $height Height of the book
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{id: int, title: string , author: string, position: int , url: string, file: int, colour: string , pattern: int, height: int} , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, list<string>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, \OCA\Bookshelfs\Db\Book , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, string[], array{}>
 	 *
 	 * @response 200: Created and returned the book successfully
 	 * @response 400: Bad request
@@ -86,7 +87,7 @@ class BooksController extends OCSController {
 	 * @param int|null $pattern New pattern of the book
 	 * @param int|null $height New height of the book
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{id: int, title: string , author: string, position: int , url: string, file: int, colour: string , pattern: int, height: int} , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, list<string>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, \OCA\Bookshelfs\Db\Book, array{}> | DataResponse<Http::STATUS_BAD_REQUEST, string[], array{}>
 	 *
 	 * @response 200: Updated and returned the updated book successfully
 	 * @response 400: Bad request
@@ -107,7 +108,7 @@ class BooksController extends OCSController {
 	 *
 	 * @param int $id Identifier of the book to delete
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{id: int, title: string , author: string, position: int , url: string, file: int, colour: string , pattern: int, height: int} , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, list<string>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, \OCA\Bookshelfs\Db\Book, array{}> | DataResponse<Http::STATUS_BAD_REQUEST, string[], array{}>
 	 *
 	 * @response 200: Deleted and returned the deleted book successfully
 	 * @response 400: Bad request
