@@ -35,7 +35,8 @@
 	"require-dev": {
 		"nextcloud/ocp": "dev-stable29",
 		"roave/security-advisories": "dev-latest",
-		"vimeo/psalm": "^5.23"
+		"vimeo/psalm": "^5.23",
+        "phpunit/phpunit": "^10.5"
 	},
 	"config": {
 		"allow-plugins": {
