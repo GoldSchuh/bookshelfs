@@ -2,15 +2,18 @@
 
 declare(strict_types=1);
 
-namespace unit\Controller;
+namespace OCA\Bookshelfs\Tests;
 
-use OC;
 use OCA\Bookshelfs\AppInfo\Application;
 use OCA\Bookshelfs\Db\BookMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\IUserManager;
 use PHPUnit\Framework\TestCase;
 
-final class BooksControllerTest extends TestCase {
+/**
+ * @group DB
+ */
+class BooksControllerTest extends TestCase {
 	private BookMapper $bookMapper;
 	private array $testBookValues = [
 		['user_id' => 'user1', 'id' => 0, 'title' => 'Batman Philosophy' , 'author' => 'Bruce', 'position' => 0 , 'url' => '9', 'file' => 9, 'colour' => 'green' , 'pattern' => 1, 'height' => 250],
@@ -18,15 +21,15 @@ final class BooksControllerTest extends TestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		OC::$server->getAppManager()->enableApp('bookshelfs');
-		$this->bookMapper = OC::$server->get(BookMapper::class);
+		\OC::$server->getAppManager()->enableApp('bookshelfs');
+		$this->bookMapper = \OC::$server->get(BookMapper::class);
 	}
 	public function tearDown(): void {
 		$this->cleanupUser('user1');
 	}
 	private function cleanupUser(string $userId): void {
 		/** @var IUserManager $userManager */
-		$userManager = OC::$server->get(IUserManager::class);
+		$userManager = \OC::$server->get(IUserManager::class);
 		if ($userManager->userExists($userId)) {
 			$this->bookMapper->deleteBooksOfUser($userId);
 			$user = $userManager->get($userId);
