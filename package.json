@@ -1,25 +1,22 @@
 {
   "name": "bookshelfs",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0-or-later",
   "engines": {
-    "node": "^24.0.0",
-    "npm": "^11.3.0"
+    "node": "^24.13.0",
+    "npm": "^11.6.2"
   },
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "watch": "vite --mode development build --watch",
-    "lint": "eslint src",
+    "lint": "eslint",
     "stylelint": "stylelint src/**/*.vue src/**/*.scss src/**/*.css"
   },
   "type": "module",
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
-  "overrides": {
-    "vite-plugin-node-polyfills": "^0.24.0"
-  },
   "dependencies": {
     "@nextcloud/axios": "^2.5.2",
     "@nextcloud/dialogs": "^7.1.0",
@@ -32,7 +29,7 @@
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",
-    "@nextcloud/eslint-config": "^9.0.0-rc.6",
+    "@nextcloud/eslint-config": "^9.0.0-rc.7",
     "@nextcloud/event-bus": "^3.3.2",
     "@nextcloud/stylelint-config": "^3.1.1",
     "@nextcloud/typings": "^1.10.0",
@@ -42,7 +39,7 @@
     "sass": "^1.96.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.10",
-    "vite-plugin-node-polyfills": "^0.24.0",
+    "vite-plugin-node-polyfills": "^0.25.0",
     "vite-plugin-stylelint": "^6.0.2"
   }
 }

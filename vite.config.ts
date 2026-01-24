@@ -7,18 +7,46 @@ export default defineConfig(
       main: 'src/main.ts',
     }, {
         config: {
+            server: {
+                watch: {
+                    ignored: [
+                        "**/vendor/**",
+                        "**/vendor-bin/**",
+                    ]
+                },
+                //   host: true, // listen on all interfaces
+                //   port: 5173,
+                //   strictPort: true,
+                //   // cors: true,
+                //   // changeOrigin: true,
+                //   // secure: false,
+                //   hmr: {
+                //     protocol: 'ws',
+                //     host: 'localhost', // plain hostname (or 'localhost')
+                //     port: 5173,
+                //   },
+                proxy: {
+                    // A local reverse proxy (e.g. caddy) is required to forward requests to this vite dev server
+                    '/index.php/apps/bookshelfs': {
+                        target: 'http://localhost:5173',
+                        changeOrigin: true,
+                        rewrite: (path) =>
+                            path.replace(/^\/index\.php\/apps\/bookshelfs/, '/'),
+                    },
+                }
+            },
             build: {
                 sourcemap: false,
                 cssCodeSplit: true,
-                cssMinify: true,
-                minify: 'terser',
-                terserOptions: {
-                    format: {comments: false},
-                    compress: {
-                        drop_console: true,
-                        drop_debugger: true,
-                    },
-                },
+                // cssMinify: true,
+                // minify: true,
+                // terserOptions: {
+                //     format: {comments: false},
+                //     compress: {
+                //         drop_console: true,
+                //         drop_debugger: true,
+                //     },
+                // },
             rollupOptions: {
                     output: {
                         manualChunks(id: string) {
