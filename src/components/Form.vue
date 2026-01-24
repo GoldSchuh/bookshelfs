@@ -1,34 +1,29 @@
 <template>
-    <div class="create-book-form">
+    <div class="form">
       <input
           v-model="title"
           type="text"
           :placeholder="translate('bookshelfs', 'Title')"
-          class="input-title"
       />
       <input
           v-model="author"
           type="text"
           :placeholder="translate('bookshelfs', 'Author')"
-          class="input-author"
       />
       <input
           v-model="colour"
           type="text"
           :placeholder="translate('bookshelfs', 'Colour')"
-          class="input-author"
       />
       <input
           v-model="pattern"
           type="text"
           :placeholder="translate('bookshelfs', 'Pattern ID')"
-          class="input-author"
       />
       <input
           v-model="height"
           type="text"
           :placeholder="translate('bookshelfs', 'Height')"
-          class="input-author"
       />
       <input
           v-model="url"
@@ -68,10 +63,10 @@ export default {
       title: '',
       author: '',
       url: '',
-      file: '',
+      file: null as number | null,
       colour: '',
-      pattern: '',
-      height: '',
+      pattern: null as number | null,
+      height: null as number | null,
     }
   },
   methods: {

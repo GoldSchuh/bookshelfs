@@ -32,7 +32,7 @@ export default {
   methods: {
     translate,
     createBook() {
-      const create: any = this.$refs.createBook;
+      const create = this.$refs.createBook as InstanceType<typeof Form>;
       if (!create.title) {
         create.title = 'a';
       }
@@ -40,7 +40,7 @@ export default {
         create.author = 'a';
       }
       if (!create.url) {
-        create.url = '';
+        create.url = '-1';
       }
       if (!create.file) {
         create.file = -1;
@@ -66,10 +66,10 @@ export default {
       create.title = ''
       create.author = ''
       create.url = ''
-      create.file = ''
+      create.file = null
       create.colour = ''
-      create.pattern = ''
-      create.height = ''
+      create.pattern = null
+      create.height = null
     },
     reStyle() {
       this.$emit('reStyle');

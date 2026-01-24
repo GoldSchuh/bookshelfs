@@ -1,6 +1,6 @@
 <template>
   <NcAppSidebar v-if="open" name="" @close="onClose">
-      <div v-if="selected!==null">
+      <div v-if="selected!==null" class="sidebar-content">
         <Form ref="updateBook"/>
         <NcButton
             :text="translate('bookshelfs', 'Update book')" @click="updateBook"
@@ -46,7 +46,7 @@ export default {
       this.selected = book
       this.open = true
       this.$nextTick(() => { // Render after mount
-        const update: any = this.$refs.updateBook;
+        const update = this.$refs.updateBook as InstanceType<typeof Form>;
         if (update) {
           update.title = book.title;
           update.author = book.author;
@@ -59,14 +59,20 @@ export default {
       })
     },
     updateBook() {
-      const update: any = this.$refs.updateBook;
+      const update = this.$refs.updateBook as InstanceType<typeof Form>;
       this.selected.title = update.title;
       this.selected.author = update.author;
       this.selected.url = update.url;
-      this.selected.file = update.file;
+      if (update.file !== null) {
+        this.selected.file = update.file;
+      }
       this.selected.colour = update.colour;
-      this.selected.pattern = update.pattern;
-      this.selected.height = update.height;
+      if (update.pattern !== null) {
+        this.selected.pattern = update.pattern;
+      }
+      if (update.height !== null) {
+        this.selected.height = update.height;
+      }
       this.$emit('updateBook', this.selected);
     },
     deleteBook() {
@@ -78,20 +84,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$color_1: black;
-$color_2: gold;
-$color_3: goldenrod;
+
+.sidebar-content {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
 
 .form {
-  margin: 20px;
-  gap: 5px;
+  margin: 0;
 }
 
 .side {
   border: 2px solid var(--color-border-maxcontrast);
   border-radius: 3px;
   font-weight: bold;
-  color: $color_1;
 }
 
 .cover {

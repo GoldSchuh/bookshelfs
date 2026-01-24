@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace OCA\Bookshelfs\Tests;
+namespace unit\Mapper;
 
-use OCA\Bookshelfs\AppInfo\Application;
+use OC;
 use OCA\Bookshelfs\Db\BookMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
-use OCP\IUserManager;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group DB
  */
-class BooksControllerTest extends TestCase {
+class BooksMapperTest extends TestCase {
 	private BookMapper $bookMapper;
 	private array $testBookValues = [
 		['user_id' => 'user1', 'id' => 0, 'title' => 'Batman Philosophy' , 'author' => 'B', 'position' => 50 , 'url' => '9', 'file' => 9, 'colour' => 'green' , 'pattern' => 1, 'height' => 250],
@@ -23,10 +22,14 @@ class BooksControllerTest extends TestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		\OC::$server->getAppManager()->enableApp('bookshelfs');
-		$this->bookMapper = \OC::$server->get(BookMapper::class);
+		OC::$server->getAppManager()->enableApp('bookshelfs');
+		$this->bookMapper = OC::$server->get(BookMapper::class);
 	}
-	public function tearDown(): void {
+
+    /**
+     * @throws Exception
+     */
+    public function tearDown(): void {
 		$this->cleanupUser('user1');
 	}
 
@@ -34,17 +37,7 @@ class BooksControllerTest extends TestCase {
 	 * @throws Exception
 	 */
 	private function cleanupUser(string $userId): void {
-		/** @var IUserManager $userManager */
-		$userManager = \OC::$server->get(IUserManager::class);
-		if ($userManager->userExists($userId)) {
-			$this->bookMapper->deleteBooksOfUser($userId);
-			$user = $userManager->get($userId);
-			$user->delete();
-		}
-	}
-	public function testDummy() {
-		$app = new Application();
-		$this->assertEquals('bookshelfs', $app::APP_ID);
+        $this->bookMapper->deleteBooksOfUser($userId);
 	}
 
 	/**
@@ -74,16 +67,14 @@ class BooksControllerTest extends TestCase {
 		foreach ($this->testBookValues as $book) {
 			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
 			$addedBookId = $addedBook->getId();
-			$dbBook = $this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
-			$deletedBook = $this->bookMapper->deleteBook($addedBookId, $book['user_id']);
-			$this->assertNotNull($deletedBook, 'error deleting book');
-			$exceptionThrowed = false;
+            $this->bookMapper->deleteBook($addedBookId, $book['user_id']);
+			$exceptionThrown = false;
 			try {
-				$dbBook = $this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
-			} catch (DoesNotExistException $e) {
-				$exceptionThrowed = true;
+				$this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
+			} catch (DoesNotExistException) {
+				$exceptionThrown = true;
 			}
-			$this->assertTrue($exceptionThrowed, 'deleted book still exists');
+			$this->assertTrue($exceptionThrown, 'deleted book still exists');
 		}
 	}
 
@@ -98,7 +89,6 @@ class BooksControllerTest extends TestCase {
 			$addedBookId = $addedBook->getId();
 
 			$editedBook = $this->bookMapper->updateBook($addedBookId, $book['user_id'], $book['title'] . 'AAA', $book['author'] . 'BBB');
-			$this->assertNotNull($editedBook, 'error deleting book');
 			self::assertEquals($book['title'] . 'AAA', $editedBook->getTitle());
 			self::assertEquals($book['author'] . 'BBB', $editedBook->getAuthor());
 

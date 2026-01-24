@@ -20,21 +20,21 @@ class BookMapper extends QBMapper {
 		parent::__construct($db, 'bookshelfs', Book::class);
 	}
 
-	/**
-	 * @throws DoesNotExistException
-	 * @throws MultipleObjectsReturnedException|Exception
-	 */
-	public function getBook(int $id): Book {
-		$qb = $this->db->getQueryBuilder();
-
-		$qb->select('*')
-			->from($this->getTableName())
-			->where(
-				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
-			);
-
-		return $this->findEntity($qb);
-	}
+//	/**
+//	 * @throws DoesNotExistException
+//	 * @throws MultipleObjectsReturnedException|Exception
+//	 */
+//	public function getBook(int $id): Book {
+//		$qb = $this->db->getQueryBuilder();
+//
+//		$qb->select('*')
+//			->from($this->getTableName())
+//			->where(
+//				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+//			);
+//
+//		return $this->findEntity($qb);
+//	}
 
 	/**
 	 * @throws DoesNotExistException
@@ -89,9 +89,22 @@ class BookMapper extends QBMapper {
 		return $this->insert($book);
 	}
 
-	/**
-	 * @throws Exception
-	 */
+    /**
+     * @param int $id
+     * @param string $userId
+     * @param string|null $title
+     * @param string|null $author
+     * @param int|null $position
+     * @param string|null $url
+     * @param int|null $file
+     * @param string|null $colour
+     * @param int|null $pattern
+     * @param int|null $height
+     * @return Book
+     * @throws DoesNotExistException
+     * @throws Exception
+     * @throws MultipleObjectsReturnedException
+     */
 	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): Book {
 		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
 
@@ -130,9 +143,14 @@ class BookMapper extends QBMapper {
 		return $this->update($book);
 	}
 
-	/**
-	 * @throws Exception
-	 */
+    /**
+     * @param int $id
+     * @param string $userId
+     * @return Book
+     * @throws DoesNotExistException
+     * @throws Exception
+     * @throws MultipleObjectsReturnedException
+     */
 	public function deleteBook(int $id, string $userId): Book {
 		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
 

@@ -20,6 +20,7 @@ import Draggable from 'vuedraggable'
 import {type Book} from "../models/Book.ts";
 import { generateUrl } from '@nextcloud/router'
 import type {PropType} from "vue";
+import {getPath} from "../utils.ts";
 
 export default {
   components: {
@@ -37,6 +38,7 @@ export default {
     }
   },
   methods: {
+    getPath,
     getPattern(book: Book) {
       const availablePatterns = [
         "pyramid",
@@ -49,20 +51,16 @@ export default {
     onDragEnd(evt: { oldIndex: number; newIndex: number }) {
       this.drag = false
       // Draggable changes the array itself, so we only need to update positions of affected books
-      for (let j = Math.min(evt.oldIndex, evt.newIndex); j <= Math.max(evt.oldIndex, evt.newIndex); j++) {
-        let b = this.books.at(j)
-        if(!b) continue;
-        b.position = this.books.indexOf(b)
+      for (let i = Math.min(evt.oldIndex, evt.newIndex); i <= Math.max(evt.oldIndex, evt.newIndex); i++) {
+        let book = this.books.at(i)
+        if(!book) continue;
+        book.position = this.books.indexOf(book)
         const options = {
-          id: b.id,
-          position: b.position
+          id: book.id,
+          position: book.position
         }
         this.$emit('updateBook',options, false)
       }
-    },
-    getPath(book: Book) {
-      const img_link = `/index.php/core/preview?fileId=${book.url}&x=190&y=280`
-      return(img_link)
     },
     select(book: Book) {
       this.$emit('select', book)
@@ -79,9 +77,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$color_1: black;
-$color_2: gold;
-$color_3: goldenrod;
+$title: gold;
+$author: goldenrod;
 
 .bookshelf {
   /* Adding --spine styling here to make it available in this scope/component */
@@ -138,7 +135,6 @@ $color_3: goldenrod;
 	border: 2px solid var(--color-border-maxcontrast);
 	border-radius: 3px;
 	font-weight: bold;
-	color: $color_1;
 	text-align: center;
 	transform-origin: center left;
 }
@@ -156,14 +152,14 @@ $color_3: goldenrod;
 	top: 0;
   inset-inline-start: 0;
 	font-size: 12px;
-	color: $color_2;
+	color: $title;
 	writing-mode: vertical-rl;
 	text-orientation: mixed;
 }
 
 .spine-author {
 	position: absolute;
-	color: $color_3;
+	color: $author;
 	bottom: 0;
   inset-inline-start: 20%;
 }

@@ -33,8 +33,8 @@ export default {
 	},
 
   data() {
-    let state: any = loadState('bookshelfs', 'bookshelfs-initial-state')
-    const books: Book[] = (state.$books || []).sort((a: Book, b: Book) => a.position - b.position);
+    const state = loadState<{ books: Book[] }>('bookshelfs', 'bookshelfs-initial-state')
+    const books = (state.books || []).sort((a: Book, b: Book) => a.position - b.position);
     return {
       books,
     }
@@ -50,8 +50,7 @@ export default {
         console.error(error)
       })
     },
-    updateBook(options: any, local = true) {
-      console.log(options)
+    updateBook(options: Partial<Book>, local = true) {
       axios.put(generateOcsUrl(`apps/bookshelfs/api/v1/books/${options.id}`), options).then(response => {
         if (local) {
           const book = constructBook(response.data.ocs.data)
@@ -66,7 +65,7 @@ export default {
       })
     },
     deleteBook(id: number, local = true) {
-      const options: any = {id: id}
+      const options: Partial<Book> = {id: id}
       axios.delete(generateOcsUrl('apps/bookshelfs/api/v1/books/' + id), options).then(() => {
         if (local) {
           const idx = this.books.findIndex((b: Book) => b.id === id)
@@ -80,7 +79,7 @@ export default {
       })
     },
     select(book: Book) {
-      let sidebar: any = this.$refs.sidebar
+      let sidebar = this.$refs.sidebar as InstanceType<typeof Sidebar>
       sidebar.select(book);
     },
     reStyle() {

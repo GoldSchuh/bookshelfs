@@ -5,10 +5,9 @@ While I do not aim to be extensive in credits, I would like to acknowledge the f
 0. CoPilot by GitHub for helping me code & learn PHP & Vue in a comfortable manner.
 1. The initial JS- and CSS-code created is based upon https://github.com/petargyurov/virtual-bookshelf
 2. The app-icons come from https://www.svgrepo.com/svg/65710/bookshelf
-3. I've used differend Nextcloud Developer Resources:  
+3. I've used different Nextcloud Developer Resources, like:  
    - https://nextcloud.com/developer/
    - https://nextcloudappstore.readthedocs.io/en/latest/developer.html
    - https://nextcloud-vue-components.netlify.app/#/Introduction
    - https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?dir=%2F6%20Developing%20a%20complete%20app%20with%20a%20navigation%20bar%20and%20database
-4. Upon advice on the Nextcloud Forum, I've looked at other Nextcloud Apps, primarely:
    - https://github.com/nextcloud/cookbook

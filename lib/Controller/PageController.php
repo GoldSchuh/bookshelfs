@@ -46,7 +46,7 @@ class PageController extends Controller {
 		}
 
 		$state = [
-			'$books' => $books,
+			'books' => $books,
 		];
 		$this->initialStateService->provideInitialState('bookshelfs-initial-state', $state);
 		return new TemplateResponse(Application::APP_ID, 'index');
