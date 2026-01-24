@@ -26,10 +26,10 @@ class BooksMapperTest extends TestCase {
 		$this->bookMapper = OC::$server->get(BookMapper::class);
 	}
 
-    /**
-     * @throws Exception
-     */
-    public function tearDown(): void {
+	/**
+	 * @throws Exception
+	 */
+	public function tearDown(): void {
 		$this->cleanupUser('user1');
 	}
 
@@ -37,7 +37,7 @@ class BooksMapperTest extends TestCase {
 	 * @throws Exception
 	 */
 	private function cleanupUser(string $userId): void {
-        $this->bookMapper->deleteBooksOfUser($userId);
+		$this->bookMapper->deleteBooksOfUser($userId);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class BooksMapperTest extends TestCase {
 		foreach ($this->testBookValues as $book) {
 			$addedBook = $this->bookMapper->createBook(userId: 'user1', title: $book['title'], author: $book['author'], position: $book['position'], url: $book['url'], file: $book['file'], colour: $book['colour'], pattern: $book['pattern'], height: $book['height']);
 			$addedBookId = $addedBook->getId();
-            $this->bookMapper->deleteBook($addedBookId, $book['user_id']);
+			$this->bookMapper->deleteBook($addedBookId, $book['user_id']);
 			$exceptionThrown = false;
 			try {
 				$this->bookMapper->getBookOfUser($addedBookId, $book['user_id']);
