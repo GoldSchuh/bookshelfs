@@ -13,10 +13,11 @@
 	<category>multimedia</category>
 	<category>organization</category>
 	<bugs>https://test.com</bugs>
-	<dependencies>
+    <donation title="Donate via GitHub Sponsors">https://github.com/sponsors/JeCheeseSmith</donation>
+    <dependencies>
 		<nextcloud min-version="30" max-version="33"/>
 	</dependencies>
-	<navigations>
+    <navigations>
 		<navigation>
 			<id>bookshelfs</id>
 			<name>Bookshelfs</name>
@@ -25,8 +26,4 @@
 			<type>link</type>
 		</navigation>
 	</navigations>
-<!--https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/monetizing.html-->
-<!--	<donation title="Donate to the developers with PayPal" type="paypal">https://paypal.com/example</donation>-->
-<!--	<donation type="stripe">https://stripe.com/example</donation>-->
-<!--	<donation>https://other.service.com/example</donation>-->
 </info>
