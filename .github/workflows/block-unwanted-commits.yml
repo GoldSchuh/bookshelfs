@@ -1,12 +1,4 @@
-# This workflow is provided via the organization template repository
-#
-# https://github.com/nextcloud/.github
-# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
-#
-# SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
-# SPDX-License-Identifier: MIT
-
-name: Block unconventional commits
+name: Block unwanted (unconventional, fixup and squash) commits
 
 on:
   pull_request:
@@ -16,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: block-unconventional-commits-${{ github.head_ref || github.run_id }}
+  group: block-unwanted-commits-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -34,3 +26,18 @@ jobs:
       - uses: webiny/action-conventional-commits@8bc41ff4e7d423d56fa4905f6ff79209a78776c7 # v1.3.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  commit-message-check:
+    if: github.event.pull_request.draft == false
+
+    permissions:
+      pull-requests: write
+    name: Block fixup and squash commits
+
+    runs-on: ubuntu-latest-low
+
+    steps:
+      - name: Run check
+        uses: skjnldsv/block-fixup-merge-action@c138ea99e45e186567b64cf065ce90f7158c236a # v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
