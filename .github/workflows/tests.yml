@@ -69,7 +69,7 @@ jobs:
 
       - name: Run PHP linter
         shell: bash
-        run: composer lint:lint
+        run: composer lint
       - name: Run PHP code style checker
         shell: bash
         run: composer cs:check
