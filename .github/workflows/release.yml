@@ -7,10 +7,13 @@ on:
     branches:
       - master
 
+env:
+  VERSION: ${{ github.event.pull_request.head.ref }} # Expect branch name to be release version (v<major.minor.patch>), e.g: 'v0.1.0'
+
 jobs:
   build:
     name: Build, upload and release in the appstore
-    if: github.event.pull_request.merged == true  # Only run if the PR was actually merged (not just closed)
+    if: github.event.pull_request.merged == true # Only run if the PR was actually merged (not just closed)
     environment: release
     env:
       APP_ID: bookshelfs
@@ -35,17 +38,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - name: Get current tag
-        id: tag
+      - name: Get merge commit message
+        id: get_merge_message
         run: |
-          git fetch --tags --force
-          tag=$(git tag -l --points-at HEAD)
-          vtag=$(echo $tag | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+" || echo "")
-          echo "##[set-output name=currenttag;]$vtag"
+          commit_message=$(git show -s --format=%B ${{ github.event.pull_request.merge_commit_sha }})
+          echo "commit_message<<EOF" >> $GITHUB_OUTPUT
+          echo "$commit_message" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      # TODO set $APP_KEY via secrets manager
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{env.VERSION}}
+          make_latest: true
+          generate_release_notes: true
+          discussion_category_name: Announcements
+          body: ${{ steps.get_merge_message.outputs.commit_message }} # Use commit message from merge
+
       - name: Build project
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
+        if: ${{ startsWith( env.VERSION , 'v' ) }}
         id: build_release
         run: |
           echo "##[set-output name=app_id;]$APP_ID"
@@ -68,7 +79,7 @@ jobs:
           php ~/html/nextcloud/occ maintenance:mode --off
           cd ~/html/nextcloud/apps/${APP_ID}
           echo "###### make appstore"
-          tag=${{ steps.tag.outputs.currenttag }}
+          tag=${{ env.VERSION }}
           version=${tag/v/}
           webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
           echo "##[set-output name=version;]$version"
@@ -76,7 +87,7 @@ jobs:
           APP_KEY: ${{ secrets.APP_KEY }}
 
       - name: Attach tarball to github release
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) }}
+        if: ${{ startsWith( env.VERSION , 'v' ) }}
         uses: svenstaro/upload-release-action@2b9d2847a97b04d02ad5c3df2d3a27baa97ce689 # v2
         id: attach_to_release
         with:
@@ -87,24 +98,24 @@ jobs:
           overwrite: true
 
       # TODO set APPSTORE_TOKEN via secrets manager
-      - name: Publish normal release to appstore
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
-        id: publish
-        run: |
-          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
-          VERSION=${{ steps.build_release.outputs.version }}
-          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
-          curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'"}'
-        env:
-          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
-
-      - name: Publish nightly release to appstore
-        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
-        id: nightly
-        run: |
-          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
-          VERSION=${{ steps.build_release.outputs.version }}
-          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
-          curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'", "nightly": true}'
-        env:
-          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
+#      - name: Publish normal release to appstore
+#        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
+#        id: publish
+#        run: |
+#          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
+#          VERSION=${{ steps.build_release.outputs.version }}
+#          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
+#          curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'"}'
+#        env:
+#          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
+#
+#      - name: Publish nightly release to appstore
+#        if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
+#        id: nightly
+#        run: |
+#          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
+#          VERSION=${{ steps.build_release.outputs.version }}
+#          DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
+#          curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'", "nightly": true}'
+#        env:
+#          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
