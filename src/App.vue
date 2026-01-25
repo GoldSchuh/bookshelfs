@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
   <NcContent app-name="bookshelfs">
     <Nav @createBook="createBook" @reset="reset" @reStyle="reStyle"/>

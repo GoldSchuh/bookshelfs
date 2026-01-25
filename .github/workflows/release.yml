@@ -1,3 +1,8 @@
+#
+#  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+#  - SPDX-FileCopyrightText: 2020-2026 Julien Veyssier
+#  - SPDX-License-Identifier: AGPL-3.0-or-later
+#
 name: Publish release on merge to master
 
 on:

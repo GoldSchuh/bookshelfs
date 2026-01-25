@@ -1,3 +1,11 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+  - SPDX-FileCopyrightText: 2022 Petar Gyurov
+  - SPDX-FileCopyrightText: 2022 Roy Moore
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+  - SPDX-License-Identifier: MIT
+-->
+
 <template>
 	<div class="bookshelf">
 		<Draggable :list="books" class="bookshelf-inner" item-key="id" @start="drag=true" @end="onDragEnd">

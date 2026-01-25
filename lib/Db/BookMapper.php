@@ -1,5 +1,10 @@
 <?php
 
+//
+//  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+//  - SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+//  - SPDX-License-Identifier: AGPL-3.0-or-later
+//
 declare(strict_types=1);
 
 namespace OCA\Bookshelfs\Db;
@@ -19,22 +24,6 @@ class BookMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'bookshelfs', Book::class);
 	}
-
-	//	/**
-	//	 * @throws DoesNotExistException
-	//	 * @throws MultipleObjectsReturnedException|Exception
-	//	 */
-	//	public function getBook(int $id): Book {
-	//		$qb = $this->db->getQueryBuilder();
-	//
-	//		$qb->select('*')
-	//			->from($this->getTableName())
-	//			->where(
-	//				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
-	//			);
-	//
-	//		return $this->findEntity($qb);
-	//	}
 
 	/**
 	 * @throws DoesNotExistException
