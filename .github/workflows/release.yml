@@ -18,6 +18,10 @@ jobs:
     env:
       APP_ID: bookshelfs
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      discussions: write
     steps:
       - name: Use Node 24
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
