@@ -1,3 +1,7 @@
+//
+//   - SPDX-FileCopyrightText: 2026 Kars van Velzen
+//   - SPDX-License-Identifier: AGPL-3.0-or-later
+//
 import { createAppConfig } from '@nextcloud/vite-config'
 import { defineConfig } from 'vite'
 import stylelint from "vite-plugin-stylelint";
