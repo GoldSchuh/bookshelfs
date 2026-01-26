@@ -90,9 +90,9 @@ jobs:
           echo "###### make appstore"
           tag=${{ env.VERSION }}
           version=${tag/v/}
-          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
-          echo "{version}={$version}" >> $GITHUB_OUTPUT
+          echo "##[set-output name=version;]$version"
         env:
+          #          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
           APP_KEY: ${{ secrets.APP_KEY }}
 
       - name: Attach tarball to github release
