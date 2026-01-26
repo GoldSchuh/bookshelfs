@@ -4,12 +4,11 @@
 	<id>bookshelfs</id>
 	<name>Bookshelfs</name>
 	<summary>Your virtual bookshelf</summary>
-	<description><![CDATA[In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files, all in Nextcloud. Show off!]]></description>
+	<description><![CDATA[Your virtual bookshelf. Arrange e-books in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files.]]></description>
 	<version>0.1.1</version>
 	<licence>AGPL-3.0-or-later</licence>
 	<author mail="kars@octubre.be" homepage="https://me.octubre.be">Kars van Velzen</author>
     <documentation>
-        <user>https://github.com/JeCheeseSmith/bookshelfs</user>
         <admin>https://github.com/JeCheeseSmith/bookshelfs#readme</admin>
         <developer>https://github.com/JeCheeseSmith/bookshelfs/blob/master/docs/dev.md</developer>
     </documentation>
@@ -18,7 +17,7 @@
 	<category>organization</category>
 	<bugs>https://github.com/JeCheeseSmith/bookshelfs/issues</bugs>
     <repository>https://github.com/JeCheeseSmith/bookshelfs</repository>
-    <screenshot>https://github.com/JeCheeseSmith/bookshelfs/blob/d0a493964d6f8d03ca80bfa4a22e0347f027050d/docs/demo.gif</screenshot>
+    <screenshot>https://raw.githubusercontent.com/JeCheeseSmith/bookshelfs/master/docs/bright.png</screenshot>
     <donation title="Donate via GitHub Sponsors">https://github.com/sponsors/JeCheeseSmith</donation>
     <dependencies>
 		<nextcloud min-version="30" max-version="34"/>

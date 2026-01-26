@@ -9,7 +9,7 @@
 
 ![image](docs/demo.gif)
 
-Your virtual bookshelf. In this app you can easily add e-books and arrange them in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files, all in Nextcloud. Show off!
+Your virtual bookshelf. Arrange e-books in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files.
 
 ## State of maintenance
 
