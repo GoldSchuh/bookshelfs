@@ -21,7 +21,7 @@
     <screenshot>https://github.com/JeCheeseSmith/bookshelfs/blob/d0a493964d6f8d03ca80bfa4a22e0347f027050d/docs/demo.gif</screenshot>
     <donation title="Donate via GitHub Sponsors">https://github.com/sponsors/JeCheeseSmith</donation>
     <dependencies>
-		<nextcloud min-version="30" max-version="33"/>
+		<nextcloud min-version="30" max-version="34"/>
 	</dependencies>
     <navigations>
 		<navigation>
