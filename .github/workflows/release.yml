@@ -11,6 +11,9 @@ on:
       - closed
     branches:
       - master
+  push: # TODO Remove after CI testing done
+    branches:
+      - master
 
 env:
   VERSION: ${{ github.event.pull_request.head.ref }} # Expect branch name to be release version (v<major.minor.patch>), e.g: 'v0.1.0'
@@ -90,9 +93,9 @@ jobs:
           echo "###### make appstore"
           tag=${{ env.VERSION }}
           version=${tag/v/}
-          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
-          echo "{version}={$version}" >> $GITHUB_OUTPUT
+          echo "##[set-output name=version;]$version"
         env:
+#          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
           APP_KEY: ${{ secrets.APP_KEY }}
 
       - name: Attach tarball to github release
