@@ -40,9 +40,8 @@ class Version0000Date20260114110456 extends SimpleMigrationStep {
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
-				'length' => 4,
 			]);
-			$table->addColumn('user_id', Types::STRING, [
+			$table->addColumn('userid', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
@@ -56,17 +55,25 @@ class Version0000Date20260114110456 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('position', Types::BIGINT, [
 				'notnull' => true,
-				'length' => 4,
 			]);
 			$table->addColumn('url', Types::TEXT, [
 				'notnull' => true,
 			]);
 			$table->addColumn('file', Types::BIGINT, [
 				'notnull' => true,
-				'length' => 4,
+			]);
+			$table->addColumn('colour', Types::STRING, [
+				'notnull' => true,
+				'length' => 64,
+			]);
+			$table->addColumn('pattern', Types::SMALLINT, [
+				'notnull' => true,
+			]);
+			$table->addColumn('height', Types::SMALLINT, [
+				'notnull' => true,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addIndex(['user_id'], 'bookshelfs');
+			$table->addIndex(['userid'], 'bookshelfs');
 		}
 
 		return $schema;

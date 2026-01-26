@@ -30,7 +30,7 @@ class BookMapper extends QBMapper {
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function getBookOfUser(int $id, string $userId): Book {
+	public function getBookOfUser(int $id, string $userid): Book {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -39,7 +39,7 @@ class BookMapper extends QBMapper {
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			)
 			->andWhere(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
+				$qb->expr()->eq('userid', $qb->createNamedParameter($userid))
 			);
 
 		return $this->findEntity($qb);
@@ -49,13 +49,13 @@ class BookMapper extends QBMapper {
 	 * @return Book[]
 	 * @throws Exception
 	 */
-	public function getBooksOfUser(string $userId): array {
+	public function getBooksOfUser(string $userid): array {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
 			->from($this->getTableName())
 			->where(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
+				$qb->expr()->eq('userid', $qb->createNamedParameter($userid))
 			);
 
 		return $this->findEntities($qb);
@@ -64,9 +64,9 @@ class BookMapper extends QBMapper {
 	/**
 	 * @throws Exception
 	 */
-	public function createBook(string $userId, string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): Book {
+	public function createBook(string $userid, string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): Book {
 		$book = new Book();
-		$book->setUserId($userId);
+		$book->setUserid($userid);
 		$book->setTitle($title);
 		$book->setAuthor($author);
 		$book->setPosition($position);
@@ -80,7 +80,7 @@ class BookMapper extends QBMapper {
 
 	/**
 	 * @param int $id
-	 * @param string $userId
+	 * @param string $userid
 	 * @param string|null $title
 	 * @param string|null $author
 	 * @param int|null $position
@@ -94,8 +94,8 @@ class BookMapper extends QBMapper {
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function updateBook(int $id, string $userId, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): Book {
-		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
+	public function updateBook(int $id, string $userid, ?string $title = null, ?string $author = null, ?int $position = null, ?string $url = null, ?int $file = null, ?string $colour = null, ?int $pattern = null, ?int $height = null): Book {
+		$book = $this->getBookOfUser($id, $userid); // Will throw DoesNotExistException if not found
 
 		if ($title !== null) {
 			$book->setTitle($title);
@@ -134,14 +134,14 @@ class BookMapper extends QBMapper {
 
 	/**
 	 * @param int $id
-	 * @param string $userId
+	 * @param string $userid
 	 * @return Book
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function deleteBook(int $id, string $userId): Book {
-		$book = $this->getBookOfUser($id, $userId); // Will throw DoesNotExistException if not found
+	public function deleteBook(int $id, string $userid): Book {
+		$book = $this->getBookOfUser($id, $userid); // Will throw DoesNotExistException if not found
 
 		return $this->delete($book);
 	}
@@ -149,12 +149,12 @@ class BookMapper extends QBMapper {
 	/**
 	 * @throws Exception
 	 */
-	public function deleteBooksOfUser(string $userId): void {
+	public function deleteBooksOfUser(string $userid): void {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
 			->where(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId))
+				$qb->expr()->eq('userid', $qb->createNamedParameter($userid))
 			);
 		$qb->executeStatement();
 		$qb->resetQueryParts();

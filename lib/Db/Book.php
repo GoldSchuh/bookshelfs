@@ -14,8 +14,8 @@ use OCP\AppFramework\Db\Entity;
 use ReturnTypeWillChange;
 
 /**
- * @method string getUserId()
- * @method void setUserId(?string $userId)
+ * @method string getUserid()
+ * @method void setUserid(string $userid)
  * @method string getTitle()
  * @method void setTitle(string $title)
  * @method string getAuthor()
@@ -34,18 +34,18 @@ use ReturnTypeWillChange;
  * @method void setHeight(int $height)
  */
 class Book extends Entity implements JsonSerializable {
-	protected string $userId = '';
-	protected string $title = '';
-	protected string $author = '';
-	protected int $position = 0;
-	protected string $url = '';
-	protected int $file = 0;
-	protected string $colour = '';
-	protected int $pattern = 0;
-	protected int $height = 0;
+	protected ?string $userid = null;
+	protected ?string $title = null;
+	protected ?string $author = null;
+	protected ?int $position = null;
+	protected ?string $url = null;
+	protected ?int $file = null;
+	protected ?string $colour = null;
+	protected ?int $pattern = null;
+	protected ?int $height = null;
 
 	public function __construct() {
-		$this->addType('userId', 'string');
+		$this->addType('userid', 'string');
 		$this->addType('title', 'string');
 		$this->addType('author', 'string');
 		$this->addType('position', 'int');
@@ -60,7 +60,7 @@ class Book extends Entity implements JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->id,
-			'user_id' => $this->userId,
+			'userid' => $this->userid,
 			'title' => $this->title,
 			'author' => $this->author,
 			'position' => $this->position,
