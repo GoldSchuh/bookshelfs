@@ -1,3 +1,9 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+  - SPDX-FileCopyrightText: 2023-2025 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
     <div class="form">
       <input
@@ -71,7 +77,8 @@ export default {
   },
   methods: {
     translate,
-    pickImage() {
+    pickImage(e: { preventDefault: () => void; }) {
+      e.preventDefault()
       getFilePickerBuilder('Path to your book cover image',)
           .addMimeTypeFilter('image/jpeg')
           .addMimeTypeFilter('image/png')
@@ -84,7 +91,8 @@ export default {
           })
           .build().pick();
     },
-    pickEbook() {
+    pickEbook(e: { preventDefault: () => void; }) {
+      e.preventDefault()
       getFilePickerBuilder('Path to your book',)
           .addButton({
             label: 'Choose',

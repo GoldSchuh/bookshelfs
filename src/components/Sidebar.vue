@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Kars van Velzen
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
   <NcAppSidebar v-if="open" name="" @close="onClose">
       <div v-if="selected!==null" class="sidebar-content">
