@@ -21,7 +21,8 @@ env:
 jobs:
   build:
     name: Build, upload and release in the appstore
-    if: github.event.pull_request.merged == true # Only run if the PR was actually merged (not just closed)
+    # FIXME
+    # if: github.event.pull_request.merged == true # Only run if the PR was actually merged (not just closed)
     environment: release
     env:
       APP_ID: bookshelfs
@@ -53,10 +54,13 @@ jobs:
       - name: Get merge commit message
         id: get_merge_message
         run: |
-          commit_message=$(git show -s --format=%B ${{ github.event.pull_request.merge_commit_sha }})
           echo "commit_message<<EOF" >> $GITHUB_OUTPUT
-          echo "$commit_message" >> $GITHUB_OUTPUT
+          echo "fix: Development release test" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+#          commit_message=$(git show -s --format=%B ${{ github.event.pull_request.merge_commit_sha }})
+#          echo "commit_message<<EOF" >> $GITHUB_OUTPUT
+#          echo "$commit_message" >> $GITHUB_OUTPUT
+#          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v2
