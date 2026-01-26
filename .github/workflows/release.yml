@@ -61,14 +61,13 @@ jobs:
           tag_name: ${{env.VERSION}}
           make_latest: true
           generate_release_notes: true
-          discussion_category_name: Announcements
           body: ${{ steps.get_merge_message.outputs.commit_message }} # Use commit message from merge
 
       - name: Build project
         if: ${{ startsWith( env.VERSION , 'v' ) }}
         id: build_release
         run: |
-          echo "{app_id}={$APP_ID}" >> $GITHUB_OUTPUT
+          echo "app_id=$APP_ID" >> $GITHUB_OUTPUT
           echo "###### copy app certificate"
           mkdir -p ~/.nextcloud/certificates
           wget --quiet "https://github.com/nextcloud/app-certificate-requests/raw/master/${APP_ID}/${APP_ID}.crt" -O ~/.nextcloud/certificates/${APP_ID}.crt
@@ -90,9 +89,9 @@ jobs:
           echo "###### make appstore"
           tag=${{ env.VERSION }}
           version=${tag/v/}
-          echo "##[set-output name=version;]$version"
+          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
+          echo "version=$version" >> $GITHUB_OUTPUT
         env:
-          #          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
           APP_KEY: ${{ secrets.APP_KEY }}
 
       - name: Attach tarball to github release
@@ -103,7 +102,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
           asset_name: ${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
-          tag: ${{ github.ref }}
+          tag: ${{env.VERSION}}
           overwrite: true
 
       # TODO set APPSTORE_TOKEN via secrets manager
