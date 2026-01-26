@@ -159,6 +159,7 @@ $author: goldenrod;
 	position: absolute;
 	top: 0;
   inset-inline-start: 0;
+  left: 0;
 	font-size: 12px;
 	color: $title;
 	writing-mode: vertical-rl;
