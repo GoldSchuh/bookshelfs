@@ -12,6 +12,7 @@ namespace OCA\Bookshelfs\Controller;
 
 use OCA\Bookshelfs\Db\Book;
 use OCA\Bookshelfs\Db\BookMapper;
+use OCA\Bookshelfs\Service\EbookFileService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -27,6 +28,7 @@ class BooksController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly BookMapper $bookMapper,
+		private readonly EbookFileService $ebookFileService,
 		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -78,6 +80,43 @@ class BooksController extends OCSController {
 	public function addUserBook(string $title, string $author, int $position, string $url, int $file, string $colour, int $pattern, int $height): DataResponse {
 		try {
 			$book = $this->bookMapper->createBook($this->userId, $title, $author, $position, $url, $file, $colour, $pattern, $height);
+			return new DataResponse($book);
+		} catch (Throwable $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Create a book for the current user from an e-book file, extracting
+	 * title, author and cover automatically
+	 *
+	 * @param int $file File ID of the (e-)book file
+	 * @param int $position Position of the book in the shelf (array index)
+	 * @param string|null $colour Color of the book (random if omitted)
+	 * @param int|null $pattern Pattern of the book (random if omitted)
+	 * @param int|null $height Height of the book (random if omitted)
+	 *
+	 * @psalm-return DataResponse<Http::STATUS_OK, \OCA\Bookshelfs\Db\Book , array{}> | DataResponse<Http::STATUS_BAD_REQUEST, string[], array{}>
+	 *
+	 * @response 200: Created and returned the book successfully
+	 * @response 400: Bad request
+	 */
+	#[NoAdminRequired]
+	#[ApiRoute(verb: 'POST', url: '/api/v1/books/from-file')]
+	public function addUserBookFromFile(int $file, int $position, ?string $colour = null, ?int $pattern = null, ?int $height = null): DataResponse {
+		try {
+			$extracted = $this->ebookFileService->extractBook($file, $this->userId);
+			$book = $this->bookMapper->createBook(
+				$this->userId,
+				$extracted['title'],
+				$extracted['author'],
+				$position,
+				$extracted['url'],
+				$extracted['file'],
+				$colour ?? EbookFileService::randomColour(),
+				$pattern ?? EbookFileService::randomPattern(),
+				$height ?? EbookFileService::randomHeight(),
+			);
 			return new DataResponse($book);
 		} catch (Throwable $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

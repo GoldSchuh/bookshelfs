@@ -6,6 +6,16 @@
 <template>
   <NcAppNavigation>
     <Form ref="createBook"/>
+    <NcButton
+        class="from-file"
+        type="secondary"
+        @click="addBookFromFile"
+    >
+      <template #icon>
+        <span class="icon-upload"/>
+      </template>
+      {{ translate('bookshelfs', 'Add book from file') }}
+    </NcButton>
     <NcAppNavigationNew :text="translate('bookshelfs', 'Create book')" @click="createBook"/>
     <template #footer>
       <NcAppNavigationSettings>
@@ -20,6 +30,8 @@
 
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { translate } from '@nextcloud/l10n'
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
@@ -31,11 +43,28 @@ export default {
     Form,
     NcAppNavigation,
     NcAppNavigationNew,
+    NcButton,
     NcAppNavigationSettings,
   },
 
   methods: {
     translate,
+    addBookFromFile() {
+      getFilePickerBuilder(translate('bookshelfs', 'Path to your e-book file'))
+          .addMimeTypeFilter('application/epub+zip')
+          .addMimeTypeFilter('application/pdf')
+          .addButton({
+            label: translate('bookshelfs', 'Choose'),
+            variant: 'primary',
+            callback: (selectedPaths) => {
+              const fileId = (selectedPaths?.[0] as any)?._data?.id
+              if (fileId !== undefined && fileId !== null) {
+                this.$emit('createBookFromFile', fileId)
+              }
+            }
+          })
+          .build().pick();
+    },
     createBook() {
       const create = this.$refs.createBook as InstanceType<typeof Form>;
       if (!create.title) {

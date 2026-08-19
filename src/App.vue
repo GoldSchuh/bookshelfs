@@ -5,7 +5,7 @@
 
 <template>
   <NcContent app-name="bookshelfs">
-    <Nav @createBook="createBook" @reset="reset" @reStyle="reStyle"/>
+    <Nav @createBook="createBook" @createBookFromFile="createBookFromFile" @reset="reset" @reStyle="reStyle"/>
     <NcAppContent>
         <Shelf ref="bookshelf" :books="books" @select="select" @updateBook="updateBook"/>
     </NcAppContent>
@@ -49,6 +49,21 @@ export default {
     createBook(book: Book) {
       book.position = this.books.length
       axios.post(generateOcsUrl('apps/bookshelfs/api/v1/books'), book).then(response => {
+        this.books.push(constructBook(response.data.ocs.data))
+      }).catch((error) => {
+        showError(translate('bookshelfs', 'Error adding book'))
+        console.error(error)
+      })
+    },
+    createBookFromFile(fileId: number) {
+      const payload = {
+        file: fileId,
+        position: this.books.length,
+        colour: randomColor(),
+        pattern: randomPattern(),
+        height: getRandomHeight(),
+      }
+      axios.post(generateOcsUrl('apps/bookshelfs/api/v1/books/from-file'), payload).then(response => {
         this.books.push(constructBook(response.data.ocs.data))
       }).catch((error) => {
         showError(translate('bookshelfs', 'Error adding book'))
