@@ -24,5 +24,8 @@ I'd like to have a visual way to organize my bookshelf inside my Nextcloud, wher
 I developed this app to fill that need (and as a relaxing hobby during the ['blok'](https://www.uantwerpen.be/nl/studeren/studiebegeleiding-ondersteuning/studiecoaching/10-examentips/)).
 
 I hope you may find it enjoyable too!
+
+
 Edit:
-I vibe coded a way to extract the metadata from the file.
+I am trying to vibe coded a way to extract the metadata from the file.
+(Prototype)
