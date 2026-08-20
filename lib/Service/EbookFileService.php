@@ -15,6 +15,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IPreview;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -36,6 +37,7 @@ class EbookFileService {
 	public function __construct(
 		private readonly IRootFolder $rootFolder,
 		private readonly IPreview $preview,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -55,6 +57,33 @@ class EbookFileService {
 		$author = '';
 		$coverFileId = null;
 
+<<<<<<< HEAD
+		try {
+			if ($extension === 'epub') {
+				$extracted = $this->extractEpub($file);
+				$title = $extracted['title'] !== '' ? $extracted['title'] : $fallbackTitle;
+				$author = $extracted['author'];
+				if ($extracted['cover'] !== null) {
+					$coverFileId = $this->saveCoverBytes($userFolder, $extracted['cover']);
+				}
+			} elseif ($extension === 'pdf') {
+				[$pdfTitle, $pdfAuthor] = $this->extractPdfMeta($file->getContent());
+				$title = $pdfTitle !== '' ? $pdfTitle : $fallbackTitle;
+				$author = $pdfAuthor;
+				$coverFileId = $this->savePreviewCover($userFolder, $file);
+			} else {
+				$this->logger->warning('Bookshelfs: unsupported file type "{ext}" for "{file}"', [
+					'ext' => $extension,
+					'file' => $file->getName(),
+				]);
+			}
+		} catch (Throwable $e) {
+			$this->logger->warning('Bookshelfs: metadata extraction failed for "{file}": {message}', [
+				'file' => $file->getName(),
+				'message' => $e->getMessage(),
+				'exception' => $e,
+			]);
+=======
 		if ($extension === 'epub') {
 			$extracted = $this->extractEpub($file);
 			$title = $extracted['title'];
@@ -67,6 +96,11 @@ class EbookFileService {
 			$title = $pdfTitle;
 			$author = $pdfAuthor;
 			$coverFileId = $this->savePreviewCover($userFolder, $file);
+>>>>>>> d27ee42 (fixed frontend issue)
+		}
+
+		if ($title === '') {
+			$title = $fallbackTitle;
 		}
 
 		if ($title === '') {
@@ -74,7 +108,7 @@ class EbookFileService {
 		}
 
 		return [
-			'title' => $title,
+			'title' => $title !== '' ? $title : $fallbackTitle,
 			'author' => $this->truncateAuthor($author),
 			'url' => $coverFileId !== null ? (string)$coverFileId : '-1',
 			'file' => $fileId,
@@ -115,6 +149,7 @@ class EbookFileService {
 		$result = ['title' => '', 'author' => '', 'cover' => null];
 		$zip = new \ZipArchive();
 		if ($zip->open($tmp) !== true) {
+			$this->logger->warning('Bookshelfs: EPUB is not a valid zip: "{file}"', ['file' => $file->getName()]);
 			@unlink($tmp);
 			return $result;
 		}
@@ -122,6 +157,7 @@ class EbookFileService {
 		$container = $zip->getFromName('META-INF/container.xml');
 		$opfPath = $this->getOpfPath($container);
 		if ($opfPath === null) {
+			$this->logger->warning('Bookshelfs: EPUB has no readable container.xml: "{file}"', ['file' => $file->getName()]);
 			$zip->close();
 			@unlink($tmp);
 			return $result;
@@ -138,6 +174,14 @@ class EbookFileService {
 			if (is_string($cover) && $cover !== '') {
 				$result['cover'] = $cover;
 			}
+		}
+
+		if ($result['title'] === '' || $result['author'] === '') {
+			$this->logger->warning('Bookshelfs: EPUB metadata incomplete for "{file}" (title="{title}", author="{author}")', [
+				'file' => $file->getName(),
+				'title' => $result['title'],
+				'author' => $result['author'],
+			]);
 		}
 
 		$zip->close();
@@ -186,8 +230,8 @@ class EbookFileService {
 
 		$title = $xpath->query('//dc:title')->item(0);
 		$creator = $xpath->query('//dc:creator')->item(0);
-		$result['title'] = $title?->textContent ?? '';
-		$result['author'] = $creator?->textContent ?? '';
+		$result['title'] = trim($title?->textContent ?? '');
+		$result['author'] = trim($creator?->textContent ?? '');
 
 		$coverId = null;
 		foreach ($xpath->query('//opf:metadata/opf:meta') ?: [] as $meta) {
@@ -216,6 +260,23 @@ class EbookFileService {
 				$href = $item->getAttribute('href');
 				$result['coverHref'] = $href !== '' ? $href : null;
 				break;
+			}
+		}
+
+		// Last resort: pick the first raster image item as the cover
+		if ($result['coverHref'] === null) {
+			foreach ($xpath->query('//opf:manifest/opf:item') ?: [] as $item) {
+				if (!$item instanceof \DOMElement) {
+					continue;
+				}
+				$mediaType = $item->getAttribute('media-type');
+				if (str_starts_with($mediaType, 'image/') && $mediaType !== 'image/svg+xml') {
+					$href = $item->getAttribute('href');
+					if ($href !== '') {
+						$result['coverHref'] = $href;
+					}
+					break;
+				}
 			}
 		}
 
@@ -249,13 +310,145 @@ class EbookFileService {
 	 * @return array{0: string, 1: string}
 	 */
 	private function extractPdfMeta(string $content): array {
-		return [
-			$this->extractPdfStringField($content, 'Title'),
-			$this->extractPdfStringField($content, 'Author'),
-		];
+		$title = '';
+		$author = '';
+
+		$infoNum = $this->findPdfObjectRef($content, 'Info');
+		if ($infoNum !== null) {
+			$info = $this->extractPdfObject($content, $infoNum);
+			if ($info !== null) {
+				$title = $this->extractPdfStringField($info, 'Title');
+				$author = $this->extractPdfStringField($info, 'Author');
+			}
+		}
+
+		if ($title === '' || $author === '') {
+			[$xmpTitle, $xmpAuthor] = $this->extractPdfXmp($content);
+			$title = $title !== '' ? $title : $xmpTitle;
+			$author = $author !== '' ? $author : $xmpAuthor;
+		}
+
+		return [$title, $author];
+	}
+
+	private function findPdfObjectRef(string $content, string $name): ?int {
+		$pattern = '/\/' . preg_quote($name, '/') . '\s+(\d+)\s+0\s+R/';
+		if (preg_match($pattern, $content, $m) === 1) {
+			return (int)$m[1];
+		}
+		// Reference may live in a compressed trailer/xref
+		if (preg_match($pattern, $this->decompressedPdfContent($content), $m) === 1) {
+			return (int)$m[1];
+		}
+		return null;
+	}
+
+	private function extractPdfObject(string $content, int $num): ?string {
+		// Direct object
+		if (preg_match('/(?<!\d)' . $num . '\s+0\s+obj(.*?)endobj/s', $content, $m) === 1) {
+			return $this->decompressPdfObject($m[1]);
+		}
+
+		// Object may be embedded in a compressed object stream (ObjStm).
+		// ObjStm stream bodies start with "<count> <objnum> <offset> ..." so the
+		// header parser below simply ignores non-ObjStm streams.
+		foreach ($this->pdfStreams($content) as $stream) {
+			$decoded = $this->decompressStream($stream);
+			if ($decoded === null) {
+				continue;
+			}
+			$obj = $this->extractFromObjectStream($decoded, $num);
+			if ($obj !== null) {
+				return $this->decompressPdfObject($obj);
+			}
+		}
+
+		return null;
+	}
+
+	private function extractFromObjectStream(string $data, int $num): ?string {
+		// ObjStm layout: "<count> <objnum> <offset> <objnum> <offset> ...\n<data>"
+		if (preg_match('/^\s*(\d+)\s+((?:\d+\s+\d+\s+)+)/', $data, $m) !== 1) {
+			return null;
+		}
+		if (preg_match_all('/(\d+)\s+(\d+)/', trim($m[2]), $pairs) === false || count($pairs[0]) < (int)$m[1]) {
+			return null;
+		}
+
+		$offsets = [];
+		foreach ($pairs[0] as $i => $_) {
+			$offsets[(int)$pairs[1][$i]] = (int)$pairs[2][$i];
+		}
+		if (!isset($offsets[$num])) {
+			return null;
+		}
+
+		$dataStart = strlen($m[0]);
+		$start = $dataStart + $offsets[$num];
+
+		$sorted = array_values($offsets);
+		sort($sorted);
+		$end = null;
+		foreach ($sorted as $o) {
+			if ($o > $offsets[$num]) {
+				$end = $dataStart + $o;
+				break;
+			}
+		}
+
+		$obj = $end !== null ? substr($data, $start, $end - $start) : substr($data, $start);
+		return trim($obj);
+	}
+
+	private function decompressPdfObject(string $obj): string {
+		if (str_contains($obj, 'FlateDecode') && preg_match('/stream\r?\n(.*?)endstream/s', $obj, $m) === 1) {
+			$decoded = $this->decompressStream($m[1]);
+			if ($decoded !== null) {
+				return $decoded;
+			}
+		}
+		return $obj;
+	}
+
+	/**
+	 * Extract raw stream bodies using each stream object's /Length (more
+	 * reliable than scanning for "endstream", which can occur inside binary).
+	 *
+	 * @return list<string>
+	 */
+	private function pdfStreams(string $content): array {
+		$streams = [];
+		preg_match_all('/\/Length\s+(\d+)\b[^>]*>>\s*stream\r?\n/s', $content, $heads, PREG_OFFSET_CAPTURE);
+		foreach ($heads[0] as $i => $head) {
+			$start = $head[1] + strlen($head[0]);
+			$streams[] = substr($content, $start, (int)$heads[1][$i][0]);
+		}
+		return $streams;
+	}
+
+	private function decompressedPdfContent(string $content): string {
+		$out = $content;
+		foreach ($this->pdfStreams($content) as $stream) {
+			$decoded = $this->decompressStream($stream);
+			if ($decoded !== null) {
+				$out .= "\n" . $decoded;
+			}
+		}
+		return $out;
+	}
+
+	private function decompressStream(string $data): ?string {
+		foreach (['gzuncompress', 'gzdecode', 'gzinflate'] as $function) {
+			$out = @$function($data);
+			if ($out !== false && $out !== '') {
+				return $out;
+			}
+		}
+		return null;
 	}
 
 	private function extractPdfStringField(string $content, string $field): string {
+<<<<<<< HEAD
 		$escapedField = preg_quote($field, '/');
 		// Match `/Field <hex>` (hex string).
 		if (preg_match('/\/' . $escapedField . '\s*<([0-9A-Fa-f]+)>/', $content, $matches) === 1) {
@@ -274,6 +467,53 @@ class EbookFileService {
 		return '';
 	}
 
+=======
+<<<<<<< HEAD
+		$escaped = preg_quote($field, '/');
+		// Literal string: /Title (value)
+		if (preg_match('/\/' . $escaped . '\s*\(((?:[^()\\\\]|\\\\.)*)\)/', $content, $m) === 1) {
+			return $this->unescapePdfString($m[1]);
+		}
+		// Hex string: /Title <value>
+		if (preg_match('/\/' . $escaped . '\s*<([0-9A-Fa-f\s]+)>/', $content, $m) === 1) {
+			return $this->decodePdfHexString(preg_replace('/\s+/', '', $m[1]));
+		}
+		return '';
+	}
+
+	private function unescapePdfString(string $value): string {
+		$value = preg_replace_callback('/\\\\([0-7]{1,3})/', static function (array $m): string {
+			return chr((int)octdec($m[1]));
+		}, $value) ?? $value;
+
+		return strtr($value, [
+			'\\(' => '(',
+			'\\)' => ')',
+			'\\\\' => '\\',
+			'\\n' => "\n",
+			'\\r' => "\r",
+			'\\t' => "\t",
+		]);
+=======
+		$escapedField = preg_quote($field, '/');
+		// Match `/Field <hex>` (hex string).
+		if (preg_match('/\/' . $escapedField . '\s*<([0-9A-Fa-f]+)>/', $content, $matches) === 1) {
+			return $this->decodePdfHexString($matches[1]);
+		}
+
+		// Match `/Field (literal...)` (literal string), taking escapes into account.
+		if (preg_match('/\/' . $escapedField . '\s*\(/', $content, $matches, PREG_OFFSET_CAPTURE) === 1) {
+			$start = $matches[0][1] + strlen($matches[0][0]);
+			$value = $this->readPdfLiteralString($content, $start);
+			if ($value !== null) {
+				return $value;
+			}
+		}
+
+		return '';
+	}
+
+>>>>>>> main
 	/**
 	 * Read a PDF literal string starting right after the opening `(`, honouring
 	 * escaped characters (`\(`, `\)`, `\\`) and nested parentheses.
@@ -328,6 +568,10 @@ class EbookFileService {
 			$digits .= $content[++$index];
 		}
 		return $digits === '' ? '0' : $digits;
+<<<<<<< HEAD
+=======
+>>>>>>> d27ee42 (fixed frontend issue)
+>>>>>>> main
 	}
 
 	private function decodePdfHexString(string $hex): string {
@@ -345,16 +589,58 @@ class EbookFileService {
 		// Without a BOM, PDF metadata is typically Latin-1 (ISO-8859-1);
 		// convert it so the resulting string is valid UTF-8.
 		return mb_convert_encoding($bytes, 'UTF-8', 'ISO-8859-1');
+<<<<<<< HEAD
+=======
+	}
+
+	/**
+	 * @return array{0: string, 1: string}
+	 */
+	private function extractPdfXmp(string $content): array {
+		$title = '';
+		$author = '';
+
+		$metaNum = $this->findPdfObjectRef($content, 'Metadata');
+		if ($metaNum === null) {
+			return [$title, $author];
+		}
+
+		$obj = $this->extractPdfObject($content, $metaNum);
+		if ($obj === null) {
+			return [$title, $author];
+		}
+
+		if (preg_match('/<dc:title[^>]*>(.*?)<\/dc:title>/s', $obj, $m) === 1
+			&& preg_match('/<rdf:li[^>]*>([^<]*)<\/rdf:li>/s', $m[1], $li) === 1) {
+			$title = $this->cleanXmpValue($li[1]);
+		}
+
+		if (preg_match('/<dc:creator[^>]*>(.*?)<\/dc:creator>/s', $obj, $m) === 1
+			&& preg_match('/<rdf:li[^>]*>([^<]*)<\/rdf:li>/s', $m[1], $li) === 1) {
+			$author = $this->cleanXmpValue($li[1]);
+		}
+
+		return [$title, $author];
+	}
+
+	private function cleanXmpValue(string $value): string {
+		return trim(html_entity_decode($value, ENT_QUOTES, 'UTF-8'));
+>>>>>>> main
 	}
 
 	private function savePreviewCover(Folder $userFolder, File $file): ?int {
 		try {
 			if (!$this->preview->isAvailable($file)) {
+				$this->logger->warning('Bookshelfs: preview not available for PDF cover: "{file}"', ['file' => $file->getName()]);
 				return null;
 			}
 			$preview = $this->preview->getPreview($file, 190, 280, false, IPreview::MODE_FILL);
 			return $this->writeCover($userFolder, $preview->getContent(), 'jpg');
-		} catch (Throwable) {
+		} catch (Throwable $e) {
+			$this->logger->warning('Bookshelfs: PDF preview failed for "{file}": {message}', [
+				'file' => $file->getName(),
+				'message' => $e->getMessage(),
+			]);
 			return null;
 		}
 	}
@@ -374,7 +660,8 @@ class EbookFileService {
 			$node = $coverFolder->newFile($name);
 			$node->putContent($bytes);
 			return $node->getId();
-		} catch (Throwable) {
+		} catch (Throwable $e) {
+			$this->logger->warning('Bookshelfs: failed to store cover: {message}', ['message' => $e->getMessage()]);
 			return null;
 		}
 	}
@@ -397,13 +684,21 @@ class EbookFileService {
 	}
 
 	private function normaliseCoverBytes(string $bytes): ?string {
+		$head = substr($bytes, 0, 512);
+		if (str_contains($head, '<svg')) {
+			return 'svg';
+		}
+
+		if (!function_exists('getimagesizefromstring')) {
+			return null;
+		}
+
 		$info = @getimagesizefromstring($bytes);
 		if ($info === false) {
 			return null;
 		}
 
-		$mime = $info['mime'] ?? '';
-		return match ($mime) {
+		return match ($info['mime'] ?? '') {
 			'image/jpeg' => 'jpg',
 			'image/png' => 'png',
 			'image/gif' => 'gif',

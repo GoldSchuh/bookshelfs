@@ -2,7 +2,7 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>bookshelfs</id>
-	<name>Bookshelfs</name>
+	<name>Bücher</name>
 	<summary>Your virtual bookshelf</summary>
 	<description><![CDATA[Your virtual bookshelf. Arrange e-books in a virtual shelf to keep track of what you've been reading. Order books dynamically, assign them a style and link to your files.]]></description>
 	<version>0.1.1</version>
@@ -25,7 +25,7 @@
     <navigations>
 		<navigation>
 			<id>bookshelfs</id>
-			<name>Bookshelfs</name>
+	<name>Bücher</name>
 			<route>bookshelfs.page.index</route>
 			<icon>app.svg</icon>
 			<type>link</type>
