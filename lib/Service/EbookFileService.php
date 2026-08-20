@@ -57,16 +57,20 @@ class EbookFileService {
 
 		if ($extension === 'epub') {
 			$extracted = $this->extractEpub($file);
-			$title = $extracted['title'] !== '' ? $extracted['title'] : $fallbackTitle;
+			$title = $extracted['title'];
 			$author = $extracted['author'];
 			if ($extracted['cover'] !== null) {
 				$coverFileId = $this->saveCoverBytes($userFolder, $extracted['cover']);
 			}
 		} elseif ($extension === 'pdf') {
 			[$pdfTitle, $pdfAuthor] = $this->extractPdfMeta($file->getContent());
-			$title = $pdfTitle !== '' ? $pdfTitle : $fallbackTitle;
+			$title = $pdfTitle;
 			$author = $pdfAuthor;
 			$coverFileId = $this->savePreviewCover($userFolder, $file);
+		}
+
+		if ($title === '') {
+			$title = $fallbackTitle;
 		}
 
 		return [
@@ -190,7 +194,13 @@ class EbookFileService {
 			if (!$meta instanceof \DOMElement) {
 				continue;
 			}
+			// EPUB2: <meta name="cover" content="cover-image-id"/>
 			if ($meta->getAttribute('name') === 'cover') {
+				$coverId = $meta->getAttribute('content');
+				break;
+			}
+			// EPUB3: <meta property="cover-image" content="cover-image-id"/>
+			if ($meta->getAttribute('property') === 'cover-image') {
 				$coverId = $meta->getAttribute('content');
 				break;
 			}
@@ -247,26 +257,77 @@ class EbookFileService {
 
 	private function extractPdfStringField(string $content, string $field): string {
 		$escapedField = preg_quote($field, '/');
-		if (preg_match('/\/' . $escapedField . '\s*\(([^)]*)\)/s', $content, $matches) === 1) {
-			return $this->unescapePdfString($matches[1]);
-		}
-
+		// Match `/Field <hex>` (hex string).
 		if (preg_match('/\/' . $escapedField . '\s*<([0-9A-Fa-f]+)>/', $content, $matches) === 1) {
 			return $this->decodePdfHexString($matches[1]);
+		}
+
+		// Match `/Field (literal...)` (literal string), taking escapes into account.
+		if (preg_match('/\/' . $escapedField . '\s*\(/', $content, $matches, PREG_OFFSET_CAPTURE) === 1) {
+			$start = $matches[0][1] + strlen($matches[0][0]);
+			$value = $this->readPdfLiteralString($content, $start);
+			if ($value !== null) {
+				return $value;
+			}
 		}
 
 		return '';
 	}
 
-	private function unescapePdfString(string $value): string {
-		return strtr($value, [
-			'\\(' => '(',
-			'\\)' => ')',
-			'\\\\' => '\\',
-			'\\n' => "\n",
-			'\\r' => "\r",
-			'\\t' => "\t",
-		]);
+	/**
+	 * Read a PDF literal string starting right after the opening `(`, honouring
+	 * escaped characters (`\(`, `\)`, `\\`) and nested parentheses.
+	 */
+	private function readPdfLiteralString(string $content, int $start): ?string {
+		$len = strlen($content);
+		$out = '';
+		$depth = 1;
+		for ($i = $start; $i < $len; $i++) {
+			$c = $content[$i];
+			if ($c === '\\') {
+				if ($i + 1 >= $len) {
+					break;
+				}
+				$next = $content[++$i];
+				$out .= match ($next) {
+					'n' => "\n",
+					'r' => "\r",
+					't' => "\t",
+					'b' => "\b",
+					'f' => "\f",
+					'(' => '(',
+					')' => ')',
+					'\\' => '\\',
+					default => (ctype_digit($next))
+						? chr((int)$this->octalEscape($content, $i))
+						: $next,
+				};
+				continue;
+			}
+			if ($c === '(') {
+				$depth++;
+				$out .= $c;
+				continue;
+			}
+			if ($c === ')') {
+				$depth--;
+				if ($depth === 0) {
+					return $out;
+				}
+				$out .= $c;
+				continue;
+			}
+			$out .= $c;
+		}
+		return null;
+	}
+
+	private function octalEscape(string $content, int &$index): string {
+		$digits = '';
+		while (strlen($digits) < 3 && $index + 1 < strlen($content) && ctype_digit($content[$index + 1])) {
+			$digits .= $content[++$index];
+		}
+		return $digits === '' ? '0' : $digits;
 	}
 
 	private function decodePdfHexString(string $hex): string {
@@ -275,12 +336,15 @@ class EbookFileService {
 			return '';
 		}
 
+		// PDF info strings are UTF-16BE when prefixed with a BOM.
 		if (str_starts_with($bytes, "\xFE\xFF")) {
 			$decoded = mb_convert_encoding(substr($bytes, 2), 'UTF-8', 'UTF-16BE');
 			return $decoded === false ? '' : $decoded;
 		}
 
-		return $bytes;
+		// Without a BOM, PDF metadata is typically Latin-1 (ISO-8859-1);
+		// convert it so the resulting string is valid UTF-8.
+		return mb_convert_encoding($bytes, 'UTF-8', 'ISO-8859-1');
 	}
 
 	private function savePreviewCover(Folder $userFolder, File $file): ?int {
@@ -361,7 +425,7 @@ class EbookFileService {
 	private function truncateAuthor(string $author): string {
 		$author = trim($author);
 		if ($author === '') {
-			return 'a';
+			return '';
 		}
 		return mb_substr($author, 0, 4);
 	}

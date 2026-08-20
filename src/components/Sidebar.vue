@@ -15,7 +15,7 @@
             :text="translate('bookshelfs', 'Delete book')" @click="deleteBook"
             variant="error"
         />
-        <div class="side cover" :style="{ backgroundImage: `url(${getPath(selected)})` }"/>
+        <div class="side cover" :style="coverStyle"/>
       </div>
     </NcAppSidebar>
 </template>
@@ -44,6 +44,13 @@ export default {
   methods: {
     translate,
     getPath,
+    coverStyle() {
+      if (this.selected === null) {
+        return {}
+      }
+      const path = getPath(this.selected)
+      return path === null ? {} : { backgroundImage: `url(${path})` }
+    },
     onClose() {
       this.open = false;
     },
@@ -68,21 +75,22 @@ export default {
       this.selected.title = update.title;
       this.selected.author = update.author;
       this.selected.url = update.url;
-      if (update.file !== null) {
-        this.selected.file = update.file;
+      if (update.file !== null && update.file !== '') {
+        this.selected.file = Number(update.file);
       }
       this.selected.colour = update.colour;
-      if (update.pattern !== null) {
-        this.selected.pattern = update.pattern;
+      if (update.pattern !== null && update.pattern !== '') {
+        this.selected.pattern = Number(update.pattern);
       }
-      if (update.height !== null) {
-        this.selected.height = update.height;
+      if (update.height !== null && update.height !== '') {
+        this.selected.height = Number(update.height);
       }
       this.$emit('updateBook', this.selected);
     },
     deleteBook() {
       this.$emit('deleteBook', this.selected.id);
       this.selected = null as unknown as Book;
+      this.open = false;
     }
   }
 }

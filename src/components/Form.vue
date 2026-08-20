@@ -22,13 +22,13 @@
           :placeholder="translate('bookshelfs', 'Colour')"
       />
       <input
-          v-model="pattern"
-          type="text"
+          v-model.number="pattern"
+          type="number"
           :placeholder="translate('bookshelfs', 'Pattern ID')"
       />
       <input
-          v-model="height"
-          type="text"
+          v-model.number="height"
+          type="number"
           :placeholder="translate('bookshelfs', 'Height')"
       />
       <input
@@ -44,8 +44,8 @@
         <span class="icon-category-multimedia"></span>
       </button>
       <input
-          v-model="file"
-          type="text"
+          v-model.number="file"
+          type="number"
           :placeholder="translate('bookshelfs', 'File ID')"
       />
       <button
