@@ -35,7 +35,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { translate } from '@nextcloud/l10n'
 import Form from "./Form.vue";
 import {constructBook} from "../models/Book.ts";
-import {getRandomHeight, randomColor, randomPattern} from "../utils.ts";
+import {getRandomHeight, randomColour, randomPattern} from "../utils.ts";
 import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSettings'
 
 export default {
@@ -68,10 +68,10 @@ export default {
     createBook() {
       const create = this.$refs.createBook as InstanceType<typeof Form>;
       if (!create.title) {
-        create.title = 'a';
+        create.title = '';
       }
       if (!create.author) {
-        create.author = 'a';
+        create.author = '';
       }
       if (!create.url) {
         create.url = '-1';
@@ -80,7 +80,7 @@ export default {
         create.file = -1;
       }
       if (!create.colour) {
-        create.colour = randomColor();
+        create.colour = randomColour();
       }
       if (!create.pattern) {
         create.pattern = randomPattern();
@@ -91,10 +91,10 @@ export default {
       this.$emit('createBook', constructBook({ title: create.title,
         author: create.author,
         url: create.url,
-        file: create.file,
+        file: Number(create.file) || -1,
         colour: create.colour,
-        pattern: create.pattern,
-        height: create.height,
+        pattern: Number(create.pattern) || 0,
+        height: Number(create.height) || getRandomHeight(),
         })
       )
       create.title = ''

@@ -16,7 +16,7 @@
 					<span class="spine-author">{{ book.author }}</span>
 				</div>
 				<div class="side top" :style="{top: `${280 - book.height}px`}"></div>
-        <div class="side cover" :style="{backgroundColor: `${book.colour}`, backgroundImage: `url(${getPath(book)})`, height: `${book.height}px`, top: `${280 - book.height}px`}"></div>
+        <div class="side cover" :style="coverStyle(book)"></div>
       </div>
       </template>
 		</Draggable>
@@ -47,6 +47,18 @@ export default {
   },
   methods: {
     getPath,
+    coverStyle(book: Book) {
+      const style: Record<string, string> = {
+        backgroundColor: book.colour,
+        height: `${book.height}px`,
+        top: `${280 - book.height}px`,
+      }
+      const path = getPath(book)
+      if (path !== null) {
+        style.backgroundImage = `url(${path})`
+      }
+      return style
+    },
     getPattern(book: Book) {
       const availablePatterns = [
         "pyramid",

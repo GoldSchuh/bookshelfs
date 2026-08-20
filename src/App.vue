@@ -26,7 +26,7 @@ import {generateOcsUrl} from "@nextcloud/router";
 import axios from "@nextcloud/axios";
 import {showError} from "@nextcloud/dialogs";
 import {translate} from "@nextcloud/l10n";
-import {getRandomHeight, randomColor, randomPattern} from "./utils.ts";
+import {getRandomHeight, randomColour, randomPattern} from "./utils.ts";
 
 export default {
 	components: {
@@ -59,7 +59,7 @@ export default {
       const payload = {
         file: fileId,
         position: this.books.length,
-        colour: randomColor(),
+        colour: randomColour(),
         pattern: randomPattern(),
         height: getRandomHeight(),
       }
@@ -85,8 +85,7 @@ export default {
       })
     },
     deleteBook(id: number, local = true) {
-      const options: Partial<Book> = {id: id}
-      axios.delete(generateOcsUrl('apps/bookshelfs/api/v1/books/' + id), options).then(() => {
+      axios.delete(generateOcsUrl('apps/bookshelfs/api/v1/books/' + id)).then(() => {
         if (local) {
           const idx = this.books.findIndex((b: Book) => b.id === id)
           if (idx !== -1) {
@@ -104,7 +103,7 @@ export default {
     },
     reStyle() {
       this.books.forEach((book: Book) => {
-        book.colour = randomColor();
+        book.colour = randomColour();
         book.pattern = randomPattern();
         book.height = getRandomHeight();
         this.updateBook(book)
