@@ -57,7 +57,6 @@ class EbookFileService {
 		$author = '';
 		$coverFileId = null;
 
-<<<<<<< HEAD
 		try {
 			if ($extension === 'epub') {
 				$extracted = $this->extractEpub($file);
@@ -83,24 +82,6 @@ class EbookFileService {
 				'message' => $e->getMessage(),
 				'exception' => $e,
 			]);
-=======
-		if ($extension === 'epub') {
-			$extracted = $this->extractEpub($file);
-			$title = $extracted['title'];
-			$author = $extracted['author'];
-			if ($extracted['cover'] !== null) {
-				$coverFileId = $this->saveCoverBytes($userFolder, $extracted['cover']);
-			}
-		} elseif ($extension === 'pdf') {
-			[$pdfTitle, $pdfAuthor] = $this->extractPdfMeta($file->getContent());
-			$title = $pdfTitle;
-			$author = $pdfAuthor;
-			$coverFileId = $this->savePreviewCover($userFolder, $file);
->>>>>>> d27ee42 (fixed frontend issue)
-		}
-
-		if ($title === '') {
-			$title = $fallbackTitle;
 		}
 
 		if ($title === '') {
@@ -448,7 +429,6 @@ class EbookFileService {
 	}
 
 	private function extractPdfStringField(string $content, string $field): string {
-<<<<<<< HEAD
 		$escapedField = preg_quote($field, '/');
 		// Match `/Field <hex>` (hex string).
 		if (preg_match('/\/' . $escapedField . '\s*<([0-9A-Fa-f]+)>/', $content, $matches) === 1) {
@@ -467,53 +447,6 @@ class EbookFileService {
 		return '';
 	}
 
-=======
-<<<<<<< HEAD
-		$escaped = preg_quote($field, '/');
-		// Literal string: /Title (value)
-		if (preg_match('/\/' . $escaped . '\s*\(((?:[^()\\\\]|\\\\.)*)\)/', $content, $m) === 1) {
-			return $this->unescapePdfString($m[1]);
-		}
-		// Hex string: /Title <value>
-		if (preg_match('/\/' . $escaped . '\s*<([0-9A-Fa-f\s]+)>/', $content, $m) === 1) {
-			return $this->decodePdfHexString(preg_replace('/\s+/', '', $m[1]));
-		}
-		return '';
-	}
-
-	private function unescapePdfString(string $value): string {
-		$value = preg_replace_callback('/\\\\([0-7]{1,3})/', static function (array $m): string {
-			return chr((int)octdec($m[1]));
-		}, $value) ?? $value;
-
-		return strtr($value, [
-			'\\(' => '(',
-			'\\)' => ')',
-			'\\\\' => '\\',
-			'\\n' => "\n",
-			'\\r' => "\r",
-			'\\t' => "\t",
-		]);
-=======
-		$escapedField = preg_quote($field, '/');
-		// Match `/Field <hex>` (hex string).
-		if (preg_match('/\/' . $escapedField . '\s*<([0-9A-Fa-f]+)>/', $content, $matches) === 1) {
-			return $this->decodePdfHexString($matches[1]);
-		}
-
-		// Match `/Field (literal...)` (literal string), taking escapes into account.
-		if (preg_match('/\/' . $escapedField . '\s*\(/', $content, $matches, PREG_OFFSET_CAPTURE) === 1) {
-			$start = $matches[0][1] + strlen($matches[0][0]);
-			$value = $this->readPdfLiteralString($content, $start);
-			if ($value !== null) {
-				return $value;
-			}
-		}
-
-		return '';
-	}
-
->>>>>>> main
 	/**
 	 * Read a PDF literal string starting right after the opening `(`, honouring
 	 * escaped characters (`\(`, `\)`, `\\`) and nested parentheses.
@@ -568,10 +501,6 @@ class EbookFileService {
 			$digits .= $content[++$index];
 		}
 		return $digits === '' ? '0' : $digits;
-<<<<<<< HEAD
-=======
->>>>>>> d27ee42 (fixed frontend issue)
->>>>>>> main
 	}
 
 	private function decodePdfHexString(string $hex): string {
@@ -589,8 +518,6 @@ class EbookFileService {
 		// Without a BOM, PDF metadata is typically Latin-1 (ISO-8859-1);
 		// convert it so the resulting string is valid UTF-8.
 		return mb_convert_encoding($bytes, 'UTF-8', 'ISO-8859-1');
-<<<<<<< HEAD
-=======
 	}
 
 	/**
@@ -625,7 +552,6 @@ class EbookFileService {
 
 	private function cleanXmpValue(string $value): string {
 		return trim(html_entity_decode($value, ENT_QUOTES, 'UTF-8'));
->>>>>>> main
 	}
 
 	private function savePreviewCover(Folder $userFolder, File $file): ?int {
