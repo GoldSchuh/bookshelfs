@@ -66,7 +66,8 @@ export default {
       axios.post(generateOcsUrl('apps/bookshelfs/api/v1/books/from-file'), payload).then(response => {
         this.books.push(constructBook(response.data.ocs.data))
       }).catch((error) => {
-        showError(translate('bookshelfs', 'Error adding book'))
+        const message = error?.response?.data?.ocs?.data?.error
+        showError(message ? `${translate('bookshelfs', 'Error adding book')}: ${message}` : translate('bookshelfs', 'Error adding book'))
         console.error(error)
       })
     },

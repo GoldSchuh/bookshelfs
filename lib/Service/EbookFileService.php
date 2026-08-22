@@ -89,7 +89,7 @@ class EbookFileService {
 		}
 
 		return [
-			'title' => $title !== '' ? $title : $fallbackTitle,
+			'title' => $this->sanitizeTitle($title),
 			'author' => $this->truncateAuthor($author),
 			'url' => $coverFileId !== null ? (string)$coverFileId : '-1',
 			'file' => $fileId,
@@ -440,7 +440,7 @@ class EbookFileService {
 			$start = $matches[0][1] + strlen($matches[0][0]);
 			$value = $this->readPdfLiteralString($content, $start);
 			if ($value !== null) {
-				return $value;
+				return $this->pdfStringToUtf8($value);
 			}
 		}
 
@@ -517,7 +517,7 @@ class EbookFileService {
 
 		// Without a BOM, PDF metadata is typically Latin-1 (ISO-8859-1);
 		// convert it so the resulting string is valid UTF-8.
-		return mb_convert_encoding($bytes, 'UTF-8', 'ISO-8859-1');
+		return $this->ensureUtf8($bytes);
 	}
 
 	/**
@@ -644,11 +644,52 @@ class EbookFileService {
 	}
 
 	private function truncateAuthor(string $author): string {
+		$author = $this->ensureUtf8($author);
+		$author = preg_replace('/[\p{Cc}]+/u', '', $author) ?? $author;
 		$author = trim($author);
 		if ($author === '') {
 			return '';
 		}
 		return mb_substr($author, 0, 4);
+	}
+
+	/**
+	 * Clamp a title to the schema's 36-char limit and make sure it is valid
+	 * UTF-8 so the database insert can never fail on length or encoding.
+	 */
+	private function sanitizeTitle(string $title): string {
+		return $this->sanitizeText($title, 36);
+	}
+
+	private function sanitizeText(string $text, int $maxLength): string {
+		$text = $this->ensureUtf8($text);
+		$text = preg_replace('/[\p{Cc}]+/u', ' ', $text) ?? $text;
+		$text = preg_replace('/\s+/u', ' ', trim($text)) ?? trim($text);
+		return mb_substr($text, 0, $maxLength);
+	}
+
+	/**
+	 * Guarantee valid UTF-8: keep already-valid strings, otherwise fall back
+	 * to interpreting the bytes as Latin-1 (typical for PDF metadata).
+	 */
+	private function ensureUtf8(string $text): string {
+		if (mb_check_encoding($text, 'UTF-8')) {
+			return $text;
+		}
+		$converted = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+		return $converted !== false ? $converted : '';
+	}
+
+	/**
+	 * Converts a raw PDF string (literal string body) to UTF-8:
+	 * UTF-16BE strings carry a BOM, everything else uses PDFDocEncoding/Latin-1.
+	 */
+	private function pdfStringToUtf8(string $raw): string {
+		if (str_starts_with($raw, "\xFE\xFF")) {
+			$decoded = mb_convert_encoding(substr($raw, 2), 'UTF-8', 'UTF-16BE');
+			return $decoded === false ? '' : $decoded;
+		}
+		return $this->ensureUtf8($raw);
 	}
 
 	private function closeHandles($in, $out): void {

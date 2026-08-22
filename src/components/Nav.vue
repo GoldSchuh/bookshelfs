@@ -57,8 +57,10 @@ export default {
             label: translate('bookshelfs', 'Choose'),
             variant: 'primary',
             callback: (selectedPaths) => {
-              const fileId = (selectedPaths?.[0] as any)?._data?.id
-              if (fileId !== undefined && fileId !== null) {
+              const node = selectedPaths?.[0] as any
+              const rawId = node?.fileid ?? node?._data?.id ?? (node?.id !== undefined && node?.id !== null ? node.id : undefined)
+              const fileId = rawId !== undefined && rawId !== null && Number(rawId) > 0 ? Number(rawId) : undefined
+              if (fileId !== undefined) {
                 this.$emit('createBookFromFile', fileId)
               }
             }
